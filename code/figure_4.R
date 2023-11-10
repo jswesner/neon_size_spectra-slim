@@ -13,7 +13,12 @@ te = rbeta(1000, 7, 60)
 metab = rbeta(1000, 12, 15)
 subsidies = rbeta(1000, 14, 25)
 
-post_sample_lambdas_summary = readRDS(file = "models/posteriors/post_sample_lambdas.rds") %>% 
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+
+post_sample_lambdas_summary = fit_temp_om_gpp$data %>% 
+  distinct(sample_id, site_id, year, log_om_s, log_gpp_s, mat_s) %>% 
+  mutate(xmin = 0.003, xmax = 200000, no_m2 = 1) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NULL) %>% 
   group_by(sample_id) %>% 
   median_qi(.epred)
 
