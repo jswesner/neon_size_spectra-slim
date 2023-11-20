@@ -102,9 +102,14 @@ library(patchwork)
 uni_plot_dots = readRDS("plots/uni_plot_dots.rds")
 interaction_plot = readRDS("plots/interaction_plot.rds")
 
-temp_twopanel = uni_plot_dots / interaction_plot
+temp_twopanel = uni_plot_dots + interaction_plot
 
 ggview::ggview(temp_twopanel, width = 4, height = 6.5)
 ggsave(temp_twopanel, width = 4, height = 6.5,
        file = "plots/ms_plots/fig_3_temp_twopanel.jpg", dpi = 500)
 saveRDS(temp_twopanel, file = "plots/ms_plots/fig_3_temp_twopanel.rds")
+
+
+# Combine to 3-panel plot with old Fig. 4
+sim_metab_plot = readRDS(file = "plots/ms_plots/sim_metab_plot.rds")
+

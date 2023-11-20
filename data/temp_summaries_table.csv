@@ -1,0 +1,21 @@
+Author,b_diff,direction,scale_km,xmin,xmax,x_units,organisms,error,error_type,b_low,b_high,System,Temp Range,Driver,Notes,Method,Include,prop_diff,temp_low,temp_high
+Pomeranz et al. 2019,0.46,0.46,10,0.000001,0.01,g,invertebrates,,,-1.08,-0.62,Streams,,Acid Mining,Fig. 3 - extracted from ImageJ,log2_bins,Y,0.2,,
+Robinson et al. 2016,0.53,-0.53,1000,20,,g,fish,,,-1.91,-1.38,Marine,,Fishing Pressure,"Fig. 2a - extracted with ImageJ, NO MAX SIZES ARE GIVEN",mle,Y,0.2,,
+Blanchard et al. 2005,0.4,-0.4,10,,,,fish,,,-1.82,-1.42,Marine,,Fishing Pressure,"Fig. 1 - extracted with ImageJ. Extracted from a time series. In the paper, effects are attributed mostly to fishing and less to temperature.",log2_biomass,Y,0.3,,
+Jennings and Blanchard 2004,0.9,-0.9,,1,66,kg,fish,,,-1,-0.1,Marine,,Fishing Pressure,"Fig. 5 - compared emperical size spectrum under fishing pressure to hypothetical ""no pressure"" spectrum assuming trophic efficiency of 0.125, which yields a slope estimate of -0.1",log10_biomass,Y,0.1,,
+Dulvy et al. 2004,0.006,0.006,,50,600,g,fish,,,0.03,0.024,Marine,,Fishing Pressure,Fig. 3a  - extracted from ImageJ,log10_abundance,Y,18.3,,
+Graham et al. 2005,0.01,-0.01,100,15,65,cm,fish,,,-0.225,-0.215,Marine,,Fishing Pressure,Fig. 2b,ln-ln abundance,Y,,,
+Martinez et al. 2016,0.15,0.15,10,,,,invertebrates,,,-1.11,-0.96,Streams,,Land Use,Fig. 2,log10_bins,Y,0.7,,
+Collyer et al. 2022,0.53,0.53,100,1,630.9573445,mg,macroinvertebrates,,,-0.98,-0.45,Streams,,Land Use,Fig. 4b,LBNbiom,Y,,,
+Sprules and Munawar 1986,0.3,-0.3,5000,0.000001,10000,ug C,,,,-1.25,-0.95,Lakes,,Phosphorous,don't include. Values in original figure (Fig. 4) are estimates from other papers.,,N,0.4,,
+Dossena et al. 2012 (April),0.21,-0.21,0.001,0.630957344,69.18309709,ug_C,macroinvertebrates,0.064,se,,,FW mesocosms,4C above ambient,Temperature,Fig. 1a (April),log10_bins,Y,0.5,10,14
+Dossena et al. 2012 (October),0.14,0.14,0.001,0.630957344,69.18309709,ug_C,macroinvertebrates,0.07,se,,,FW mesocosms,4C above ambient,Temperature,Fig. 1c (October),log10_bins,Y,1.6,10,14
+Yvon Durocher et al. 2011 (Community),0.13,-0.13,0.001,0.00000001,63.09573445,ug_C,phyto_zooplankton,,,-0.79,-0.92,FW mesocosms,4C above ambient,Temperature,Fig. 1a (community spectrum),log10_bins,Y,0.8,10,14
+Yvon Durocher et al. 2011 (Phytoplankton),0.19,-0.19,0.001,0.00000001,0.0001,ug_C,phyto_zooplankton,,,-0.46,-0.65,FW mesocosms,4C above ambient,Temperature,Fig. 1d (Phytoplankton spectrum,log10_bins,Y,0.6,10,14
+O'Gorman et al. 2017,0.15,0.15,1,1.13E-07,2980.957987,mg,inverts_fish,,,-0.85,-0.7,Streams,5 to 25C,Temperature,Fig. 1 - extracted with ImageJ. ,ln-ln_abundance,Y,0.7,5,25
+McGarvey and Kirk 2018,0.19,0.19,10,316.227766,100000,mg,fish,,,-1.81,-1.62,Streams,Seasonal,Temperature,"don’t included - values are just spatial variation, not driven by land use or temp",,N,0.6,,
+Pomeranz et al. 2021,0.12,-0.12,5000,0.0001,30000,mg,inverts_fish,,,-1.37,-1.25,Streams,(-)6 to 25C,Temperature,don't include. Values in original figure (Fig. 4) are estimates from other papers.,,Y,0.9,3,23
+Coghlan et al. 2022,0.35,-0.35,5000,0.000001,10000,g,inverts_fish,,,-0.6,-0.25,Marine,,Temperature,Figure 3,log bins,Y,,,
+Arranz et al. 2023,0.2,-0.2,500,,,,fish,,,-2.3,-1.4,Streams,11 to 19C,Temperature,Fig. 2a -median invasions,log bins,Y,,11,19
+Arranz et al. 2023 (NatEcol),0.05,-0.05,500,,,,fish,,,,,Streams,11 to 19C,Temperature,,log bins,Y,,11,19
+Gjoni et al. 2023,0,0,5000,0.003,200000,,inverts_fish,,,,,Streams,2 to 23C,Temperature,,mle,Y,,2,23

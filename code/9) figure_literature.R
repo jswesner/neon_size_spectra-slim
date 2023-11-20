@@ -1,11 +1,12 @@
 library(tidyverse)
 library(brms)
 library(tidybayes)
+library(isdbayes)
 # Literature Figure Comparisons -------------------------------------------
 theme_set(theme_default())
 
 fit_pareto = readRDS("models/fit_pareto.rds")
-source("code/sandbox/paretocounts.R")
+
 
 dat_all = readRDS("data/derived_data/dat_all.rds")
 mean_temp = mean(unique(dat_all$mean))
@@ -113,9 +114,10 @@ lit_plot_scaled_noribbon = lit %>%
   labs(y = "\u03bb (scaled)",
        x = "Temperature (\u00b0C)"))
 
-(lit_plot_unscaled_raw_b = lit %>% 
+label_text = lit %>% 
   filter(Driver == "Temperature") %>% 
-  filter(Author != "Gjoni et al. 2023") %>% 
+  filter(Author != "Gjoni et al. 2023") %>%
+  filter(Author != "Coghlan et al. 2022") %>% # removed because the paper doesn't report temperature ranges and effects on lambda
   mutate(b_low = case_when(is.na(b_low) ~ 0 - 0.5*direction,
                            TRUE ~ b_low),
          b_high = case_when(is.na(b_high) ~ 0 + 0.5*direction,
@@ -123,7 +125,7 @@ lit_plot_scaled_noribbon = lit %>%
   mutate(low = paste0(temp_low, "_", b_low),
          high = paste0(temp_high, "_", b_high)) %>% 
   group_by(Author) %>%
-  mutate(author_code = cur_group_id()) %>% 
+  mutate(author_code = cur_group_id()) %>%
   select(Author, author_code, low, high) %>% 
   pivot_longer(cols = c(low, high)) %>% 
   separate(value, into = c("temp", "b"), sep = "_") %>% 
@@ -131,21 +133,54 @@ lit_plot_scaled_noribbon = lit %>%
          value = parse_number(b)) %>%
   group_by(author_code) %>% 
   mutate(value = scale(value, scale = F)) %>% 
-  ggplot(aes(x = x, y = value)) + 
-  geom_line(aes(group = author_code), alpha = 0.5) +
-  # facet_wrap(~Driver) + 
-  geom_line(data = conds_scaled, aes(x = x_raw)) +
+  filter(x == min(x)) %>% 
+  distinct(x, author_code, value) %>% 
+  mutate(x = case_when(author_code == 3 ~ x + 0.05*x,
+                       author_code == 8 ~ x - 0.02*x,
+                       author_code == 2 ~ 19,
+                       TRUE ~ x),
+         value = case_when(author_code == 3 ~ value + 0.1*value,
+                           author_code == 2 ~ -0.04,
+                           TRUE ~ value))
+
+
+(lit_plot_unscaled_raw_b = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>%
+    filter(Author != "Coghlan et al. 2022") %>% # removed because the paper doesn't report temperature ranges and effects on lambda
+  mutate(b_low = case_when(is.na(b_low) ~ 0 - 0.5*direction,
+                           TRUE ~ b_low),
+         b_high = case_when(is.na(b_high) ~ 0 + 0.5*direction,
+                            TRUE ~ b_high)) %>% 
+  mutate(low = paste0(temp_low, "_", b_low),
+         high = paste0(temp_high, "_", b_high)) %>% 
+  group_by(Author) %>%
+  mutate(author_code = cur_group_id()) %>%
+  select(Author, author_code, low, high) %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  separate(value, into = c("temp", "b"), sep = "_") %>% 
+  mutate(x = parse_number(temp),
+         value = parse_number(b)) %>%
+  group_by(author_code) %>% 
+  mutate(value = scale(value, scale = F)) %>% 
+  ggplot(aes(x = x, y = value)) +
+  # facet_wrap(~Driver) +
   geom_ribbon(data = conds_scaled,
               aes(ymin = .lower,
                   ymax = .upper,
                   x = x_raw),
               alpha = 0.7,
               fill = "orange") +
-  geom_text(data = . %>% filter(x == min(x)) %>% distinct(x, author_code, value) , 
+    geom_line(aes(group = author_code), alpha = 0.5) + 
+    geom_line(data = conds_scaled, aes(x = x_raw)) +
+  geom_text(data = label_text, 
             aes(label = author_code),
             size = 3) +
   labs(y = "\u03bb (centered by study)",
        x = "Temperature (\u00b0C)"))
+
+
+
 
 (lit_plot_otherdrivers = lit %>% 
   # filter(Driver == "Temperature") %>%
@@ -196,10 +231,10 @@ ggsave(lit_plot_unscaled, file = "plots/lit_plot_unscaled.jpg",
        width = 5, height = 5)
 
 ggsave(lit_plot_unscaled_raw_b, file = "plots/lit_plot_unscaled_raw_b.jpg", 
-       width = 5, height = 5)
+       width = 5, height = 4)
 
 ggsave(lit_plot_otherdrivers + guides(color = "none"), file = "plots/lit_plot_otherdrivers.jpg", 
-       width = 5, height = 5)
+       width = 5, height = 4)
 
 ggsave(lit_plot_boxplot+ guides(color = "none",
                                 fill = "none"), file = "plots/lit_plot_boxplot.jpg", 
