@@ -1,64 +1,254 @@
-library(brms)
 library(tidyverse)
+library(brms)
 library(tidybayes)
-library(ggview)
-library(janitor)
 library(isdbayes)
+# Literature Figure Comparisons -------------------------------------------
+theme_set(theme_default())
 
-#1) load data
+fit_pareto = readRDS("models/fit_pareto.rds")
+
+
 dat_all = readRDS("data/derived_data/dat_all.rds")
+mean_temp = mean(unique(dat_all$mean))
+sd_temp = sd(unique(dat_all$mean))
 
-mean_temp = mean(unique(dat_all$temp_mean))
-sd_temp = sd(unique(dat_all$temp_mean))
+# literature comparison
 
-# fancy facets
-facet_gpp = readRDS(file = "plots/facet_gpp.rds")
-facet_om = readRDS(file = "plots/facet_om.rds")
+lit <- read_csv("data/temp_summaries_table.csv") %>% 
+        filter(Include == "Y") %>% 
+  mutate(size_magnitude = round(log10(xmax) - log10(xmin),0),
+         size_scale = size_magnitude*scale_km) %>% 
+  group_by(Author, organisms, b_diff) %>% 
+  mutate(id = cur_group_id())
 
-#2) load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+mod_best <- readRDS("models/fit_pareto.rds")
+mod_summary = summary(mod_best)
+conds = tibble(mat_s = seq(min(fit_pareto$data$mat_s), max(fit_pareto$data$mat_s), length.out = 20)) %>% 
+  mutate(log_gpp_s = 0,
+         log_om_s = 0,
+         no_m2 = 1,
+         xmin = 0.0035, 
+         xmax = 200000) %>% 
+  add_epred_draws(fit_pareto, re_formula = NA) %>% 
+  group_by(mat_s) %>% 
+  median_qi(.epred)
 
-#3) get quantiles for om and gpp
-qlog_om_s = quantile(unique(dat_all$log_om_s), probs = c(0.25, 0.5, 0.75), na.rm = T) %>% 
-  as_tibble() %>% 
-  pivot_longer(cols = everything(), values_to = "log_om_s", names_to = "quantile_om") %>% 
-  mutate(quantile_om = c("Low OM", "Median OM", "High OM"))
 
-qlog_gpp_s = quantile(unique(dat_all$log_gpp_s), probs = c(0.25, 0.5, 0.75), na.rm = T) %>% 
-  as_tibble() %>% 
-  pivot_longer(cols = everything(), values_to = "log_gpp_s", names_to = "quantile_gpp") %>% 
-  mutate(quantile_gpp = c("Low GPP", "Median GPP", "High GPP"))
 
-#4) extract posteriors across data grid.
-post_lines_heat = tibble(mat_s = seq(min(dat_all$mat_s), max(dat_all$mat_s), length.out = 10)) %>% 
-  expand_grid(log_gpp_s = seq(min(dat_all$log_gpp_s), max(dat_all$log_gpp_s), length.out = 10)) %>%
-  # expand_grid(log_om_s = seq(min(dat_all$log_om_s), max(dat_all$log_om_s), length.out = 30)) %>%
-  expand_grid(qlog_om_s) %>% 
-  mutate(no_m2 = 1, xmin = 0.003, xmax = 20000) %>%  # placeholder values. They do not affect the lambda predictions
-  add_epred_draws(fit_temp_om_gpp, re_formula = NA) %>% 
-  median_qi(.epred) %>%
-  mutate(temp_mean = (mat_s*sd_temp) + mean_temp)  %>% 
-  mutate(quantile_om = as.factor(quantile_om)) %>%
-  mutate(quantile_om = fct_relevel(quantile_om, "Low OM", "Median OM"),
-         log_gpp = (log_gpp_s*sd(unique(dat_all$log_gpp))) + mean(unique(dat_all$log_gpp))) %>% 
-  left_join(facet_om)
+# plot slopes (scale-independent)
+conds_scaled = conds %>% 
+  mutate(value = .epred - mean(.epred),
+         .lower = .lower - mean(.epred),
+         .upper = .upper - mean(.epred),
+         Driver = "Temperature",
+        x = mat_s,
+        id = "Gjoni et al. 2023",
+        group = "This Study") %>% 
+  mutate(x_raw = (mat_s*sd_temp) + mean_temp)
 
-#5) Make and plot
-(isd_heat_plot = post_lines_heat %>% 
-    ggplot(aes(x = temp_mean, y = log_gpp)) +
-    geom_tile(aes(fill = .epred)) +
-    facet_wrap(~facet_om, labeller = "label_parsed") +
-    scale_fill_viridis_c(direction = -1, na.value="white") +
-    geom_point(data = dat_all %>% ungroup %>% distinct(mat_s, log_gpp) %>% 
-                 mutate(temp_mean = (mat_s*sd_temp) + mean_temp), shape = 21,
-               col = 'black', fill = "white", size = 1.5) +
-    theme_default() +
-    labs(fill = "\u03bb",
-         x = "Mean Annual Temperature (\u00b0C)",
-         y = expression(paste("GPP ln(",gC/m ^ 2/yr,")")))+
-    theme(legend.key.height= unit(0.4, 'cm'),
-          legend.key.width= unit(0.4, 'cm')))
+lit_plot_scaled = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>% 
+  mutate(low = 0 - 0.5*direction,
+         high = 0 + 0.5*direction,
+         group = "Literature Estimates") %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  mutate(x = case_when(name == "low" ~ min(conds$mat_s), TRUE ~ max(conds$mat_s))) %>% 
+  ggplot(aes(x = x, y = value)) + 
+  geom_line(aes(group = id), alpha = 0.5) +
+  # facet_wrap(~Driver) + 
+  geom_line(data = conds_scaled) +
+  geom_ribbon(data = conds_scaled,
+              aes(ymin = .lower,
+                  ymax = .upper),
+              alpha = 0.7,
+              fill = "orange") +
+  ylim(-0.4, 0.4) +
+  labs(y = "\u03bb (scaled)",
+       x = "Temperature (scaled)")
 
-ggview::ggview(isd_heat_plot, width = 6.5, height = 2.2)
-ggsave(isd_heat_plot, width = 6, height = 2, file = "plots/ms_plots/isd_heat_plot.jpg", dpi = 500)
-saveRDS(isd_heat_plot, file = "plots/ms_plots/isd_heat_plot.rds")
+lit_plot_scaled_noribbon = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>% 
+  mutate(low = 0 - 0.5*direction,
+         high = 0 + 0.5*direction,
+         group = "Literature Estimates") %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  mutate(x = case_when(name == "low" ~ min(conds$mat_s), TRUE ~ max(conds$mat_s))) %>% 
+  ggplot(aes(x = x, y = value)) + 
+  geom_line(aes(group = id), alpha = 0.5) +
+  # facet_wrap(~Driver) + 
+  # geom_line(data = conds_scaled) +
+  # geom_ribbon(data = conds_scaled,
+  #             aes(ymin = .lower,
+  #                 ymax = .upper),
+  #             alpha = 0.7,
+  #             fill = "orange") +
+  ylim(-0.4, 0.4) +
+  labs(y = "\u03bb (scaled)",
+       x = "Temperature (scaled)")
+
+(lit_plot_unscaled = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>% 
+  mutate(low = 0 - 0.5*direction,
+         high = 0 + 0.5*direction,
+         group = "Literature Estimates") %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  mutate(x = case_when(name == "low" ~ temp_low, TRUE ~ temp_high)) %>% 
+  ggplot(aes(x = x, y = value)) + 
+  geom_line(aes(group = id), alpha = 0.5) +
+  # facet_wrap(~Driver) + 
+  geom_line(data = conds_scaled, aes(x = x_raw)) +
+  geom_ribbon(data = conds_scaled,
+              aes(ymin = .lower,
+                  ymax = .upper,
+                  x = x_raw),
+              alpha = 0.7,
+              fill = "orange") +
+  geom_text(data = . %>% filter(x == min(x)) %>% distinct(x, Author, value) %>% 
+                             group_by(Author) %>%
+                             mutate(author_code = cur_group_id()), 
+                           aes(label = author_code),
+                           size = 3) +
+  labs(y = "\u03bb (scaled)",
+       x = "Temperature (\u00b0C)"))
+
+label_text = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>%
+  filter(Author != "Coghlan et al. 2022") %>% # removed because the paper doesn't report temperature ranges and effects on lambda
+  mutate(b_low = case_when(is.na(b_low) ~ 0 - 0.5*direction,
+                           TRUE ~ b_low),
+         b_high = case_when(is.na(b_high) ~ 0 + 0.5*direction,
+                            TRUE ~ b_high)) %>% 
+  mutate(low = paste0(temp_low, "_", b_low),
+         high = paste0(temp_high, "_", b_high)) %>% 
+  group_by(Author) %>%
+  mutate(author_code = cur_group_id()) %>%
+  select(Author, author_code, low, high) %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  separate(value, into = c("temp", "b"), sep = "_") %>% 
+  mutate(x = parse_number(temp),
+         value = parse_number(b)) %>%
+  group_by(author_code) %>% 
+  mutate(value = scale(value, scale = F)) %>% 
+  filter(x == min(x)) %>% 
+  distinct(x, author_code, value) %>% 
+  mutate(x = case_when(author_code == 3 ~ x + 0.05*x,
+                       author_code == 8 ~ x - 0.02*x,
+                       author_code == 2 ~ 19,
+                       TRUE ~ x),
+         value = case_when(author_code == 3 ~ value + 0.1*value,
+                           author_code == 2 ~ -0.04,
+                           TRUE ~ value))
+
+
+(lit_plot_unscaled_raw_b = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>%
+    filter(Author != "Coghlan et al. 2022") %>% # removed because the paper doesn't report temperature ranges and effects on lambda
+  mutate(b_low = case_when(is.na(b_low) ~ 0 - 0.5*direction,
+                           TRUE ~ b_low),
+         b_high = case_when(is.na(b_high) ~ 0 + 0.5*direction,
+                            TRUE ~ b_high)) %>% 
+  mutate(low = paste0(temp_low, "_", b_low),
+         high = paste0(temp_high, "_", b_high)) %>% 
+  group_by(Author) %>%
+  mutate(author_code = cur_group_id()) %>%
+  select(Author, author_code, low, high) %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  separate(value, into = c("temp", "b"), sep = "_") %>% 
+  mutate(x = parse_number(temp),
+         value = parse_number(b)) %>%
+  group_by(author_code) %>% 
+  mutate(value = scale(value, scale = F)) %>% 
+  ggplot(aes(x = x, y = value)) +
+  # facet_wrap(~Driver) +
+  geom_ribbon(data = conds_scaled,
+              aes(ymin = .lower,
+                  ymax = .upper,
+                  x = x_raw),
+              alpha = 0.7,
+              fill = "orange") +
+    geom_line(aes(group = author_code), alpha = 0.5) + 
+    geom_line(data = conds_scaled, aes(x = x_raw)) +
+  geom_text(data = label_text, 
+            aes(label = author_code),
+            size = 3) +
+  labs(y = "\u03bb (centered by study)",
+       x = "Temperature (\u00b0C)"))
+
+
+
+
+(lit_plot_otherdrivers = lit %>% 
+  # filter(Driver == "Temperature") %>%
+  filter(Author != "Gjoni et al. 2023") %>% 
+  mutate(low = 0 - 0.5*direction,
+         high = 0 + 0.5*direction,
+         group = "Literature Estimates") %>% 
+  pivot_longer(cols = c(low, high)) %>% 
+  ungroup() %>% 
+  mutate(x = case_when(name == "low" ~ min(conds$mat_s), TRUE ~ max(conds$mat_s)),
+         Driver = fct_relevel(Driver, "Temperature")) %>% 
+  ggplot(aes(x = x, y = value)) + 
+  geom_line(aes(group = id,
+                color = Driver), alpha = 0.5) +
+  # facet_wrap(~Driver) + 
+  ggthemes::scale_color_colorblind() +
+  geom_line(data = conds_scaled) +
+  geom_ribbon(data = conds_scaled,
+              aes(ymin = .lower,
+                  ymax = .upper),
+              alpha = 0.7,
+              fill = "orange") +
+  ylim(-0.4, 0.4) +
+  labs(y = "\u03bb (scaled)",
+       x = "Temperature (scaled)"))
+
+
+lit_plot_boxplot = lit %>% 
+  # mutate(Driver = fct_relevel(Driver, "Temperature")) %>% 
+  ggplot(aes(x = reorder(Driver, b_diff),
+             y = b_diff)) +
+  geom_boxplot(aes(group = Driver, fill = reorder(Driver, b_diff)), width = 0.2) +
+  geom_point() +
+  ggthemes::scale_fill_colorblind() +
+  theme_default() +
+  labs(x = "Stressor",
+       y = "Absolute change in \u03bb")
+
+
+
+ggsave(lit_plot_scaled, file = "plots/lit_plot_scaled.jpg", 
+       width = 5, height = 5)
+
+ggsave(lit_plot_scaled_noribbon, file = "plots/lit_plot_scaled_noribbon.jpg", 
+       width = 5, height = 5)
+
+ggsave(lit_plot_unscaled, file = "plots/lit_plot_unscaled.jpg", 
+       width = 5, height = 5)
+
+ggsave(lit_plot_unscaled_raw_b, file = "plots/lit_plot_unscaled_raw_b.jpg", 
+       width = 5, height = 4)
+
+ggsave(lit_plot_otherdrivers + guides(color = "none"), file = "plots/lit_plot_otherdrivers.jpg", 
+       width = 5, height = 4)
+
+ggsave(lit_plot_boxplot+ guides(color = "none",
+                                fill = "none"), file = "plots/lit_plot_boxplot.jpg", 
+       width = 5, height = 5)
+
+
+
+# effect size plot --------------------------------------------------------
+fit_pareto
+
+lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>%
+  mutate(temp_range = temp_high - temp_low) %>% 
+  ggplot(aes(x = temp_range, y = direction, size = size_magnitude)) +
+  geom_point()
+#
