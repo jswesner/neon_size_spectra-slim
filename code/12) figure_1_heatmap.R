@@ -8,8 +8,8 @@ resource_maineffect = rnorm(nsims, 0.2, 0.) # resources have average zero main e
 temp_resource_interaction = rnorm(nsims, 0.05, 0.0) #interaction between temp and resources 
 
 # simulate data
-temp = seq(-1, 1, length.out = 20)
-resources = seq(-1, 1, length.out = 20)
+temp = seq(-1, 1, length.out = 50)
+resources = seq(-1, 1, length.out = 50)
 
 # simulate lambdas
 lambdas = tibble(a1 = temp_maineffect,
@@ -20,7 +20,7 @@ lambdas = tibble(a1 = temp_maineffect,
   expand_grid(resources = resources) %>% 
   mutate(.epred = intercept + a1*temp + a2*resources + a3*temp*resources)
 
-lambdas %>% 
+heatmap_fig1 = lambdas %>% 
   ggplot(aes(y = temp, x =resources)) + 
   geom_tile(aes(fill = .epred)) +
   scale_color_viridis() +
@@ -28,6 +28,9 @@ lambdas %>%
   brms::theme_default() +
   labs(fill = "\u03bb",
        x = "Resources",
-       y = "Temperature")
+       y = "Temperature") +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank())
 
+ggsave(heatmap_fig1, width = 4.5, height = 3, file = "plots/heatmap_fig1.jpg")
 
