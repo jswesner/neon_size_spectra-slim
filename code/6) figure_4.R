@@ -29,6 +29,10 @@ isd_sims = tibble(ppmr = ppmr,
          `2) Standard Model +\nShallow Metabolic Scaling` = (log10(te)/log10(ppmr)) - metab - 1,
          `4) Standard Model +\nShallow Metabolic Scaling +\nSubsidies` = (log10(te)/log10(ppmr)) - metab + subsidies - 1)
 
+isd_sims %>% 
+  pivot_longer(cols = c(-ppmr, -te, -metab, -subsidies)) %>% 
+  group_by(name) %>% 
+  median_qi(value)
 
 #3) Load fitted model and wrangle empirical lambdas
 fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
