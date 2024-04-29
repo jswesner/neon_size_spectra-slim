@@ -10,10 +10,10 @@ neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct
   clean_names()
 
 temp_gpp_om = readRDS("data/derived_data/dat_all.rds") %>% 
-  ungroup %>% distinct(site_id, temp_mean,
+  ungroup %>% distinct(site_id, mean,
                        gpp, mean_om) %>% 
   left_join(neon_latlong) %>% 
-  pivot_longer(cols = c(gpp, mean_om, temp_mean))
+  pivot_longer(cols = c(gpp, mean_om, mean))
 
 # load map data
 world <- map_data("world") %>% expand_grid(name = temp_gpp_om %>% distinct(name))
@@ -28,7 +28,7 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     geom_polygon(data = world, aes(x = long, y = lat, group = group), fill = "grey70") +
     geom_sf(color = "white", fill = "grey70") +
     geom_polygon(data = states, aes(x = long, y = lat, group = group), color = "white", fill = "grey70")  +
-    geom_point(data = temp_gpp_om %>% filter(name == "temp_mean"), 
+    geom_point(data = temp_gpp_om %>% filter(name == "mean"), 
                aes(x = long, y = lat, fill = value),
                size = 2,
                alpha = 0.9,
@@ -38,7 +38,7 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     coord_sf(ylim = c(10, 68), xlim = c(-160, -68)) +
     labs(fill = "\u00b0C",
          title = "a) Site Map") +
-    scale_fill_viridis() + 
+    scale_fill_viridis(option = "A") + 
     theme(legend.position = c(0.25, 0.4),
           legend.key.size = unit(0.4, "cm"),
           legend.title = element_text(size = 8),

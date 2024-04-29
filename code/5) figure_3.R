@@ -11,7 +11,7 @@ fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
-dat_all = readRDS("data/derived_data/dat_all.rds")
+dat_all = readRDS("data/derived_data/dat_all.rds") %>% mutate(temp_mean = mean)
 
 mean_temp = mean(unique(dat_all$temp_mean))
 sd_temp = sd(unique(dat_all$temp_mean))
@@ -104,7 +104,7 @@ library(janitor)
 library(isdbayes)
 
 #1) load data
-dat_all = readRDS("data/derived_data/dat_all.rds")
+dat_all = readRDS("data/derived_data/dat_all.rds") %>% mutate(temp_mean = mean)
 
 mean_temp = mean(unique(dat_all$temp_mean))
 sd_temp = sd(unique(dat_all$temp_mean))
@@ -160,6 +160,25 @@ post_lines_heat = tibble(mat_s = seq(min(dat_all$mat_s), max(dat_all$mat_s), len
 ggview::ggview(isd_heat_plot, width = 6.5, height = 2.2)
 ggsave(isd_heat_plot, width = 6, height = 2, file = "plots/ms_plots/isd_heat_plot.jpg", dpi = 500)
 saveRDS(isd_heat_plot, file = "plots/ms_plots/isd_heat_plot.rds")
+
+
+# get marginal slopes
+marginal_epreds = tibble(mat_s = c(0,1)) %>% 
+  # expand_grid(log_gpp_s = seq(min(dat_all$log_gpp_s), max(dat_all$log_gpp_s), length.out = 10)) %>%
+  # expand_grid(log_om_s = seq(min(dat_all$log_om_s), max(dat_all$log_om_s), length.out = 30)) %>%
+  expand_grid(qlog_om_s) %>% 
+  expand_grid(qlog_gpp_s) %>% 
+  mutate(no_m2 = 1, xmin = 0.003, xmax = 20000) %>%  # placeholder values. They do not affect the lambda predictions
+  add_epred_draws(fit_temp_om_gpp, re_formula = NA)
+
+
+marginal_epreds %>% 
+  ungroup %>% select(mat_s, quantile_om, quantile_gpp, log_gpp_s, log_om_s, .draw, .epred) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) %>% 
+  group_by(quantile_om, quantile_gpp) %>% 
+  median_qi(slope)
+
 
 
 # Combine plots -----------------------------------------------------------
