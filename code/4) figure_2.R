@@ -61,7 +61,7 @@ correlations = tibble(gppom = cor(abiotic_wide$log_gpp_s, abiotic_wide$log_om_s)
 omtemp_plot = abiotic_wide %>% 
   ggplot(aes(x = mat_s, y = log_om_s)) + 
   geom_point(size = 1) +
-  labs(y = "log10OM\n(z-score)",
+  labs(y = "log OM\n(z-score)",
        x = "Temperature (z-score)") +
   labs(title = "b) Correlation Plots") +
   annotate(geom = "text", x= -0.9, y = 2, label = correlations %>% filter(name == "omtemp") %>% pull(labels),
@@ -70,7 +70,7 @@ omtemp_plot = abiotic_wide %>%
 gpptemp_plot = abiotic_wide %>% 
   ggplot(aes(x = mat_s, y = log_gpp_s)) + 
   geom_point(size = 1) +
-  labs(y = "log10GPP\n(z-score)",
+  labs(y = "log GPP\n(z-score)",
        x = "Temperature (z-score)") +
   annotate(geom = "text", x= -0.9, y = 2, label = correlations %>% filter(name == "gpptemp") %>% pull(labels),
            size = 3)
@@ -78,8 +78,8 @@ gpptemp_plot = abiotic_wide %>%
 gppom_plot = abiotic_wide %>% 
   ggplot(aes(x = log_gpp_s, y = log_om_s)) + 
   geom_point(size = 1) +
-  labs(y = "log10OM\n(z-score)",
-       x = "log10GPP (z-score)") +
+  labs(y = "log OM\n(z-score)",
+       x = "log GPP (z-score)") +
   annotate(geom = "text", x= -0.9, y = 2, label = correlations %>% filter(name == "gppom") %>% pull(labels),
            size = 3)
 

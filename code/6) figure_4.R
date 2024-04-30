@@ -84,13 +84,14 @@ cond_posts_metab = brm_metab$data %>%
 
 #6) Plot metabolic scaling regression
 metab_plot = cond_posts_metab %>% 
-  ggplot(aes(x = log_dw_c, y = .epred)) + 
+  ggplot(aes(x = log_dw_c, y = .epred))  +
+  geom_point(data = brm_metab$data, aes(y = log_resp_c), 
+             shape = 1, size = 0.1) + 
   geom_line() + 
-  geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = 0.3) +
-  geom_point(data = brm_metab$data, aes(y = log_resp_c), size = 0.2) + 
+  geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = 0.3) + 
   labs(y = "log10 Metabolic Rate (centered)",
        x = "log10 dry mass (mg centered)") + 
-  geom_abline(slope = 0.75, linewidth = 0.5) + 
+  geom_abline(slope = 0.75, linewidth = 0.5, linetype = "dotted") + 
   theme_default()
 
 saveRDS(metab_plot, file = "plots/metab_plot.rds")

@@ -51,12 +51,12 @@ int_plot_data = int_plot$`mat_s:log_om_s` %>% as_tibble() %>%
     mutate(fill_color = case_when(quantile_om == "Low OM" ~ -0.25,
                                   quantile_om == "High OM" ~ -0.75,
                                   TRUE ~ -0.5)) %>% 
-    ggplot(aes(x = mat, y = estimate__, fill = fill_color)) + 
-    geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.8) + 
+    ggplot(aes(x = mat, y = estimate__)) + 
+    geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.7) + 
     geom_line() +
     facet_grid(facet_gpp~facet_om, labeller = "label_parsed") +
     theme_default() + 
-    scale_fill_viridis() +
+    # scale_fill_viridis() +
     guides(fill = "none",
            color = "none") + 
     labs(y = "\u03bb (ISD exponent)",
@@ -146,7 +146,7 @@ post_lines_heat = tibble(mat_s = seq(min(dat_all$mat_s), max(dat_all$mat_s), len
     ggplot(aes(x = temp_mean, y = log_gpp)) +
     geom_tile(aes(fill = .epred)) +
     facet_wrap(~facet_om, labeller = "label_parsed") +
-    scale_fill_viridis_c(direction = -1, na.value="white") +
+    scale_fill_viridis_c(direction = -1, na.value="white", option = "F") +
     geom_point(data = dat_all %>% ungroup %>% distinct(mat_s, log_gpp) %>% 
                  mutate(temp_mean = (mat_s*sd_temp) + mean_temp), shape = 21,
                col = 'black', fill = "white", size = 1.5) +
@@ -190,10 +190,10 @@ interaction_plot = readRDS("plots/interaction_plot.rds") + labs(subtitle = "b)")
 isd_heat_plot = readRDS("plots/ms_plots/isd_heat_plot.rds") + labs(subtitle = "c)") 
 
 top = plot_grid(uni_plot_dots, interaction_plot)
-temp_twopanel = plot_grid(top, isd_heat_plot, ncol = 1, rel_heights = c(1, 0.7))
+temp_twopanel = plot_grid(top, isd_heat_plot, ncol = 1, rel_heights = c(0.7, 0.65))
 
-ggview::ggview(temp_twopanel, width = 6.5, height = 6.5)
-ggsave(temp_twopanel, width = 6.5, height = 6.5,
+ggview::ggview(temp_twopanel, width = 6.5, height = 5.5)
+ggsave(temp_twopanel, width = 6.5, height = 5.5,
        file = "plots/ms_plots/fig_3_temp_twopanel.jpg", dpi = 500)
 saveRDS(temp_twopanel, file = "plots/ms_plots/fig_3_temp_twopanel.rds")
 

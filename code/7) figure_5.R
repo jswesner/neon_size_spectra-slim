@@ -169,8 +169,7 @@ label_text = lit %>%
               aes(ymin = .lower,
                   ymax = .upper,
                   x = x_raw),
-              alpha = 0.7,
-              fill = "orange") +
+              alpha = 0.7) +
     geom_line(aes(group = author_code), alpha = 0.5) + 
     geom_line(data = conds_scaled, aes(x = x_raw)) +
   geom_text(data = label_text, 
