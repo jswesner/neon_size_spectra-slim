@@ -15,9 +15,6 @@ fit_temp_gpp = readRDS("models/fit_temp_gpp.rds")
 fit_om_gpp = readRDS("models/fit_om_gpp.rds")
 fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
 
-
-
-
 # Re-fit models -----------------------------------------------------------
 # !!!! Each of the models below takes up to 24 hours to run. They were run on a cluster. Here, we've added them
 # for clarity, but with only a small number of iterations to prevent overwhelming memory. If you fit the models below
