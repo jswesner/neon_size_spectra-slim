@@ -5,7 +5,7 @@ library(isdbayes)
 # Literature Figure Comparisons -------------------------------------------
 theme_set(theme_default())
 
-fit_pareto = readRDS("models/fit_pareto.rds")
+fit_pareto = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
 
 
 dat_all = readRDS("data/derived_data/dat_all.rds")
@@ -21,7 +21,7 @@ lit <- read_csv("data/temp_summaries_table.csv") %>%
   group_by(Author, organisms, b_diff) %>% 
   mutate(id = cur_group_id())
 
-mod_best <- readRDS("models/fit_pareto.rds")
+mod_best <- readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
 mod_summary = summary(mod_best)
 conds = tibble(mat_s = seq(min(fit_pareto$data$mat_s), max(fit_pareto$data$mat_s), length.out = 20)) %>% 
   mutate(log_gpp_s = 0,

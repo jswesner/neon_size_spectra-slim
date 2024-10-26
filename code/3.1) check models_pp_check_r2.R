@@ -13,23 +13,18 @@ theme_set(brms::theme_default())
 
 # 1) load models
 # load models 
-fit_temp = readRDS("models/fit_temp.rds")
-fit_om = readRDS("models/fit_om.rds")
-fit_gpp = readRDS("models/fit_gpp.rds")
-fit_temp_om = readRDS("models/fit_temp_om.rds")
-fit_temp_gpp = readRDS("models/fit_temp_gpp.rds")
-fit_om_gpp = readRDS("models/fit_om_gpp.rds")
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+model_list = readRDS(file = "models/model_list.rds")
+mod = model_list$`models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds`
 
 # 2) get data
-dat = as_tibble(fit_temp_om_gpp$data)
+dat = as_tibble(mod$data)
 
 # 3) extract posteriors 
 posts_sample_lambdas = dat %>% 
   distinct(sample_id, .keep_all = T) %>% 
   select(-dw) %>% 
   mutate(no_m2 = 1) %>% 
-  add_epred_draws(fit_temp_om_gpp, re_formula = NULL) %>% 
+  add_epred_draws(mod, re_formula = NULL) %>% 
   rename(lambda = .epred) %>% 
   ungroup()
 
@@ -90,7 +85,7 @@ post_pred_si = sim_posts %>%
   theme(legend.position = c(0.8, 0.08)) +
   NULL
 
-ggview::ggview(post_pred_si, width = 6.5, height = 9)
+# ggview::ggview(post_pred_si, width = 6.5, height = 9)
 ggsave(post_pred_si, file = "plots/post_pred_i.jpg", width = 6.5, height = 9)
 
 sim_posts %>%
@@ -129,7 +124,7 @@ set.seed = 23234
 preds = dat_resampled %>% 
   slice_sample(n = 5000) %>% 
   mutate(no_m2 = 1) %>% 
-  add_predicted_draws(fit_temp_om_gpp, re_formula = NA, ndraws = 1000) 
+  add_predicted_draws(mod, re_formula = NA, ndraws = 1000) 
 
 preds %>% 
   group_by(.draw) %>% 

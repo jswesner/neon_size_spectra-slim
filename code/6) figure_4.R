@@ -35,7 +35,7 @@ isd_sims %>%
   median_qi(value)
 
 #3) Load fitted model and wrangle empirical lambdas
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
 
 post_sample_lambdas_summary = fit_temp_om_gpp$data %>% 
   distinct(sample_id, site_id, year, log_om_s, log_gpp_s, mat_s) %>% 
@@ -62,7 +62,7 @@ simulation_plot = isd_sims %>%
            color = "#1f968bff", size = 2.5) +
   coord_cartesian(xlim = c(-2.4, -0.6))
 
-ggview::ggview(simulation_plot, width = 6.5, height = 3.9)
+# ggview::# ggview(simulation_plot, width = 6.5, height = 3.9)
 saveRDS(simulation_plot, file = "plots/ms_plots/simulation_plot.rds")
 ggsave(simulation_plot, width = 6.5, height = 3.9, file = "plots/ms_plots/simulation_plot.jpg", dpi = 500)
 
@@ -119,7 +119,7 @@ metab_plot = readRDS(file = "plots/metab_plot.rds") + labs(subtitle = "b) Shallo
 sim_metab_plot = simulation_plot + metab_plot
 
 #3) Save plots
-ggview::ggview(sim_metab_plot, width = 6.5, height = 3, units = "in")
+# ggview::# ggview(sim_metab_plot, width = 6.5, height = 3, units = "in")
 ggsave(sim_metab_plot, file = "plots/ms_plots/sim_metab_plot.jpg",
        width = 6.5, height = 3, units = "in", dpi = 600)
 saveRDS(sim_metab_plot, file = "plots/ms_plots/sim_metab_plot.rds")

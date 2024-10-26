@@ -9,14 +9,14 @@ library(ggview)
 theme_set(brms::theme_default())
 
 # load these
+model_list = readRDS(file = "models/model_list.rds")
 fitdat2 = readRDS(file = "data/fitdat2.rds") # raw re-sampled data
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds") # bayesian model
-post_preds2 = readRDS(file = "posteriors/post_preds2.rds") # extracted posteriors of 133 samples (load to avoid re-running)
+fit_temp_om_gpp = model_list$`models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds`# bayesian model
 
 # 1) Wrangle  -------------------------------------------------------------
 
 # resample raw data
-n_pred = 5000 # number of individuals to sample. This is 5000 for the ms. But it works ok with 500 as well.
+n_pred = 500 # number of individuals to sample. This is 5000 for the ms. But it works ok with 500 as well.
 
 fitdat_temp = fit_temp_om_gpp$data %>% 
   # filter(sample_id %in% 1:50) %>% 
@@ -120,7 +120,7 @@ post_pred_gm = post_pred_gm_summary %>%
                               title = "")) +
   theme(legend.position = c(0.2, 0.95))
 
-ggview(post_pred_gm, width = 6.5, height = 5.5)
+# ggview(post_pred_gm, width = 6.5, height = 5.5)
 saveRDS(post_pred_gm, file = "plots/post_pred_gm.rds")
 ggsave(post_pred_gm, file = "plots/post_pred_gm.jpg", width = 6.5, height = 5.5)       
        

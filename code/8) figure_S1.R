@@ -7,13 +7,14 @@ library(ggthemes)
 theme_set(brms::theme_default())
 
 #1) load models
-fit_temp = readRDS("models/fit_temp.rds")
-fit_om = readRDS("models/fit_om.rds")
-fit_gpp = readRDS("models/fit_gpp.rds")
-fit_temp_om = readRDS("models/fit_temp_om.rds")
-fit_temp_gpp = readRDS("models/fit_temp_gpp.rds")
-fit_om_gpp = readRDS("models/fit_om_gpp.rds")
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+model_list = readRDS(file = "models/model_list.rds")
+fit_temp = model_list$`models/fit_temp_newxmin_sumnorm_clauset.rds`
+fit_om = model_list$`models/fit_om_newxmin_sumnorm_clauset.rds`
+fit_gpp = fit_gpp_newxmin_sumnorm
+fit_temp_om = model_list$`models/fit_om_temp_newxmin_sumnorm_clauset.rds`
+fit_temp_gpp = model_list$`models/fit_temp_gpp_newxmin_sumnorm_clauset.rds`
+fit_om_gpp = model_list$`models/fit_om_gpp_newxmin_sumnorm_clauset.rds`
+fit_temp_om_gpp = model_list$`models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds`
 
 
 #2) add a name to the model files (for faceting later), combine to a list
@@ -36,8 +37,7 @@ all_mods = list(fit_temp,
 
 
 #3) load data and get means/sds for backtransforming from scaled to unscaled
-dat_all = readRDS("data/derived_data/dat_all.rds")
-
+dat_all = readRDS("data/derived_data/dat_all.rds") %>% mutate(temp_mean = mean)
 mean_temp = mean(unique(dat_all$temp_mean))
 sd_temp = sd(unique(dat_all$temp_mean))
 mean_om = mean(unique(dat_all$log_om))
@@ -89,7 +89,7 @@ parameter_plot = all_draws  %>%
   scale_y_continuous(breaks = c(-0.04, -0.02, 0, 0.02, 0.04)) +
   NULL
 
-ggview::ggview(parameter_plot, width = 6.5, height = 7)
+# ggview::ggview(parameter_plot, width = 6.5, height = 7)
 ggsave(parameter_plot, file = "plots/ms_plots/parameter_plot.jpg", 
        width = 6.5, height = 7, units = "in", dpi = 600 )
 saveRDS(parameter_plot, file = "plots/ms_plots/parameter_plot.rds")

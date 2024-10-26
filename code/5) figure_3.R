@@ -6,7 +6,7 @@ library(viridis)
 library(ggthemes)
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
 
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
@@ -64,7 +64,7 @@ int_plot_data = int_plot$`mat_s:log_om_s` %>% as_tibble() %>%
 )
 
 
-ggview::ggview(interaction_plot, width = 4, height = 4)
+# ggview::ggview(interaction_plot, width = 4, height = 4)
 ggsave(interaction_plot, width = 4, height = 4,
        file = "plots/interaction_plot.jpg")
 saveRDS(interaction_plot,  file = "plots/interaction_plot.rds")
@@ -87,7 +87,7 @@ uni_plot_dots = uni_plot$mat_s$data %>%
   ggplot(aes(x = mat, y = estimate__)) +
   geom_line() +
   geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.6) +
-  stat_pointinterval(data = sample_dots, aes(y = .epred, group = sample_id), size = 0.05, shape = 1,
+  stat_pointinterval(data = sample_dots, aes(y = .epred, group = sample_id), size = 0.05, shape = 20,
                      geom = "pointrange", color = "grey30") +
   theme_default() + 
   labs(y = "\u03bb (ISD exponent)",
@@ -114,7 +114,7 @@ facet_gpp = readRDS(file = "plots/facet_gpp.rds")
 facet_om = readRDS(file = "plots/facet_om.rds")
 
 #2) load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp
 
 #3) get quantiles for om and gpp
 qlog_om_s = quantile(unique(dat_all$log_om_s), probs = c(0.25, 0.5, 0.75), na.rm = T) %>% 
@@ -146,7 +146,7 @@ post_lines_heat = tibble(mat_s = seq(min(dat_all$mat_s), max(dat_all$mat_s), len
     ggplot(aes(x = temp_mean, y = log_gpp)) +
     geom_tile(aes(fill = .epred)) +
     facet_wrap(~facet_om, labeller = "label_parsed") +
-    scale_fill_viridis_c(direction = -1, na.value="white", option = "F") +
+    scale_fill_viridis_c(direction = -1, na.value="white") +
     geom_point(data = dat_all %>% ungroup %>% distinct(mat_s, log_gpp) %>% 
                  mutate(temp_mean = (mat_s*sd_temp) + mean_temp), shape = 21,
                col = 'black', fill = "white", size = 1.5) +
@@ -157,7 +157,7 @@ post_lines_heat = tibble(mat_s = seq(min(dat_all$mat_s), max(dat_all$mat_s), len
     theme(legend.key.height= unit(0.4, 'cm'),
           legend.key.width= unit(0.4, 'cm')))
 
-ggview::ggview(isd_heat_plot, width = 6.5, height = 2.2)
+# ggview::ggview(isd_heat_plot, width = 6.5, height = 2.2)
 ggsave(isd_heat_plot, width = 6, height = 2, file = "plots/ms_plots/isd_heat_plot.jpg", dpi = 500)
 saveRDS(isd_heat_plot, file = "plots/ms_plots/isd_heat_plot.rds")
 
@@ -180,7 +180,6 @@ marginal_epreds %>%
   median_qi(slope)
 
 
-
 # Combine plots -----------------------------------------------------------
 # Combine the two plots above into a two-panel plot
 library(cowplot)
@@ -190,10 +189,10 @@ interaction_plot = readRDS("plots/interaction_plot.rds") + labs(subtitle = "b)")
 isd_heat_plot = readRDS("plots/ms_plots/isd_heat_plot.rds") + labs(subtitle = "c)") 
 
 top = plot_grid(uni_plot_dots, interaction_plot)
-temp_twopanel = plot_grid(top, isd_heat_plot, ncol = 1, rel_heights = c(0.7, 0.65))
+temp_twopanel = plot_grid(top, isd_heat_plot, ncol = 1, rel_heights = c(0.7, 0.5))
 
-ggview::ggview(temp_twopanel, width = 6.5, height = 5.5)
-ggsave(temp_twopanel, width = 6.5, height = 5.5,
+# ggview::ggview(temp_twopanel, width = 6.5, height = 5.5)
+ggsave(temp_twopanel, width = 6.5, height = 6,
        file = "plots/ms_plots/fig_3_temp_twopanel.jpg", dpi = 500)
 saveRDS(temp_twopanel, file = "plots/ms_plots/fig_3_temp_twopanel.rds")
 

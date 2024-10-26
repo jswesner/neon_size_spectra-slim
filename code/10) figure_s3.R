@@ -3,26 +3,29 @@ library(tidyverse)
 library(isdbayes)
 
 #1) load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
 
-#2) refit to sample from priors only
-# fit_priors = update(fit_temp_om_gpp, sample_prior = "only", iter = 100, chains = 1)
-
-fit_priors = readRDS(file = "models/fit_priors.rds")
-
+ 
 #3) Get conditional effects from priors and posts
 
-prior_conds = tibble(mat_s = seq(from = min(fit_priors$data$mat_s), 
-                                 to = max(fit_priors$data$mat_s),
+prior_datagrid = tibble(mat_s = seq(from = min(fit_temp_om_gpp$data$mat_s), 
+                                 to = max(fit_temp_om_gpp$data$mat_s),
                                  length.out = 20)) %>% 
   mutate(xmin = 1, xmax = 1000, no_m2 = 1) %>%  # placeholders. Values don't matter here
-  mutate(log_om_s = 0, log_gpp_s = 0) %>% 
-  add_epred_draws(fit_priors, re_formula = NA) %>% 
+  mutate(log_om_s = 0, log_gpp_s = 0)  
+
+ndraws = 1000
+
+prior_conds = tibble(.draw = 1:ndraws) %>% 
+  mutate(b = rnorm(ndraws, 0, 0.1),
+         intercept = rnorm(ndraws, -1.6, 0.5)) %>% 
+  expand_grid(prior_datagrid) %>% 
+  mutate(.epred = intercept + mat_s*b) %>% 
   mutate(model = "a) Prior")
   
 
-post_conds = tibble(mat_s = seq(from = min(fit_priors$data$mat_s), 
-                                 to = max(fit_priors$data$mat_s),
+post_conds = tibble(mat_s = seq(from = min(fit_temp_om_gpp$data$mat_s), 
+                                 to = max(fit_temp_om_gpp$data$mat_s),
                                  length.out = 20)) %>% 
   mutate(xmin = 1, xmax = 1000, no_m2 = 1) %>%  # placeholders. Values don't matter here
   mutate(log_om_s = 0, log_gpp_s = 0) %>% 
@@ -44,7 +47,7 @@ prior_post_plot = prior_post %>%
   theme_default()
 
 
-ggview::ggview(prior_post_plot, width = 6.5, height = 3)
+# ggview::ggview(prior_post_plot, width = 6.5, height = 3)
 ggsave(prior_post_plot, width = 6.5, height = 3, dpi = 500,
        file = "plots/ms_plots/figure_s3.jpg")
 saveRDS(prior_post_plot, file = "plots/ms_plots/figure_s3.rds")
