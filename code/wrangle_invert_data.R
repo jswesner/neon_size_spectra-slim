@@ -5,35 +5,35 @@ library(tidyverse)
 # i.e., xmin is model-based
 
 # load data
-dat_fish_all = readRDS("data/derived_data/fish_dw-wrangled.rds")
-dat_fish = dat_fish_all %>% 
+dat_inverts_all = readRDS("data/derived_data/macro_dw-wrangled.rds")
+dat_inverts = dat_inverts_all %>% 
   group_by(sample_id) %>% 
   sample_n(5000, weight = no_m2, replace = T)
 
-dat_fish_list = dat_fish %>% group_by(sample_id) %>% group_split()
+dat_inverts_list = dat_inverts %>% group_by(sample_id) %>% group_split()
 
-xmin_fish_list = list()
+xmin_inverts_list = list()
 
-for(i in 1:length(dat_fish_list)){
-  powerlaw = conpl$new(dat_fish_list[[i]]$dw)
-  xmin_fish_list[[i]] = tibble(xmin_clauset = estimate_xmin(powerlaw)$xmin,
-                          sample_id = unique(dat_fish_list[[i]]$sample_id))
+for(i in 1:length(dat_inverts_list)){
+  powerlaw = conpl$new(dat_inverts_list[[i]]$dw)
+  xmin_inverts_list[[i]] = tibble(xmin_clauset = estimate_xmin(powerlaw)$xmin,
+                               sample_id = unique(dat_inverts_list[[i]]$sample_id))
 }
 
-xmins_fish_clauset = bind_rows(xmin_fish_list)
+xmins_inverts_clauset = bind_rows(xmin_inverts_list)
 
-dat_fish_clauset_xmins = dat_fish_all %>% left_join(xmins_fish_clauset) %>% 
+dat_inverts_clauset_xmins = dat_inverts_all %>% left_join(xmins_inverts_clauset) %>% 
   group_by(sample_id) %>% 
   filter(dw >= xmin_clauset) %>%
   mutate(xmin = xmin_clauset,
          xmax = max(dw))
 
-saveRDS(dat_fish_clauset_xmins, file = "data/derived_data/dat_fish_clauset_xmins.rds")
+saveRDS(dat_inverts_clauset_xmins, file = "data/derived_data/dat_inverts_clauset_xmins.rds")
 
 
 # check cutoffs -----------------------------------------------------------
 
-dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% 
+dat_inverts %>% left_join(dat_inverts_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% 
                          rename(xmin_clauset = xmin)) %>% 
   ggplot(aes(x = dw)) + 
   facet_wrap(~site_id, scales = "free") +
@@ -42,8 +42,8 @@ dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id
   geom_vline(aes(xintercept = xmin_clauset)) +
   NULL
 
-samples = unique(dat_fish$sample_id)
-dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
+samples = unique(dat_inverts$sample_id)
+dat_inverts %>% left_join(dat_inverts_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
   group_by(sample_id) %>% 
   sample_n(1000, weight = no_m2, replace = T) %>% 
   filter(sample_id == sample(samples, 1)) %>% 
