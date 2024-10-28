@@ -33,7 +33,8 @@ saveRDS(dat_fish_clauset_xmins, file = "data/derived_data/dat_fish_clauset_xmins
 
 # check cutoffs -----------------------------------------------------------
 
-dat %>% left_join(dat_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
+dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% 
+                         rename(xmin_clauset = xmin)) %>% 
   ggplot(aes(x = dw)) + 
   facet_wrap(~site_id, scales = "free") +
   geom_density(aes(group = sample_id)) +
@@ -41,8 +42,8 @@ dat %>% left_join(dat_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>
   geom_vline(aes(xintercept = xmin_clauset)) +
   NULL
 
-samples = unique(dat$sample_id)
-dat %>% left_join(dat_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
+samples = unique(dat_fish$sample_id)
+dat_fish %>% left_join(dat__fishclauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
   group_by(sample_id) %>% 
   sample_n(1000, weight = no_m2, replace = T) %>% 
   filter(sample_id == sample(samples, 1)) %>% 
