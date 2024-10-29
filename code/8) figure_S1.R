@@ -10,7 +10,7 @@ theme_set(brms::theme_default())
 model_list = readRDS(file = "models/model_list.rds")
 fit_temp = model_list$`models/fit_temp_newxmin_sumnorm_clauset.rds`
 fit_om = model_list$`models/fit_om_newxmin_sumnorm_clauset.rds`
-fit_gpp = fit_gpp_newxmin_sumnorm
+fit_gpp = model_list$`models/fit_gpp_newxmin_sumnorm_clauset.rds`
 fit_temp_om = model_list$`models/fit_om_temp_newxmin_sumnorm_clauset.rds`
 fit_temp_gpp = model_list$`models/fit_temp_gpp_newxmin_sumnorm_clauset.rds`
 fit_om_gpp = model_list$`models/fit_om_gpp_newxmin_sumnorm_clauset.rds`
@@ -86,7 +86,7 @@ parameter_plot = all_draws  %>%
   coord_flip() +
   facet_wrap(~preds, ncol = 3) +
   guides(color = "none") +
-  scale_y_continuous(breaks = c(-0.04, -0.02, 0, 0.02, 0.04)) +
+  # scale_y_continuous(breaks = c(-0.04, -0.02, 0, 0.02, 0.04)) +
   NULL
 
 # ggview::ggview(parameter_plot, width = 6.5, height = 7)
