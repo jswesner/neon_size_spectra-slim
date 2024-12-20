@@ -6,7 +6,7 @@ library(viridis)
 library(ggthemes)
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_updated12192024.rds")
 
 fit_temp_om_gpp$preds = "temp*om*gpp"
 

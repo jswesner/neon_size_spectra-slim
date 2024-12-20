@@ -6,9 +6,10 @@ library(viridis)
 library(ggthemes)
 library(janitor)
 library(ggh4x)
+library(viridis)
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_updated12192024.rds")
 
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
@@ -63,7 +64,6 @@ global_mean_lambda = as_draws_df(fit_temp_om_gpp) %>% select(b_Intercept, starts
 
 labels = dat_all %>% group_by(site_id) %>% filter(date == max(date))
 
-library(viridis)
 time_series_fig = sample_posts_summary %>% 
   ggplot(aes(x = date, y = .epred)) +
   # stat_lineribbon(data = global_mean_lambda, alpha = 0.1, .width = c(0.95), fill = "black",
@@ -96,3 +96,106 @@ time_series_fig = sample_posts_summary %>%
   scale_fill_viridis()
 
 ggsave(time_series_fig, file = "plots/time_series_fig.jpg", width = 6, height = 7, dpi = 400)
+
+
+
+
+# make_densities_by_site --------------------------------------------------
+
+site_posts = fit_temp_om_gpp$data %>% 
+  select(-dw, -no_m2, -sample_id, -year) %>% 
+  group_by(site_id) %>% 
+  mutate(xmin = min(xmin),
+         xmax = max(xmax),
+         no_m2 = 1) %>% 
+  distinct() %>% 
+  left_join(climate_zones) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = ~ (1|site_id))
+
+sample_posts = fit_temp_om_gpp$data %>% 
+  select(-dw, -no_m2, -year) %>% 
+  group_by(sample_id) %>% 
+  mutate(xmin = min(xmin),
+         xmax = max(xmax),
+         no_m2 = 1) %>% 
+  distinct() %>% 
+  left_join(climate_zones) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = ~ (1|sample_id))
+
+sample_medians = sample_posts %>% 
+  group_by(sample_id, site_id, climate_zone) %>% 
+  median_qi(.epred)
+
+library(ggridges)
+
+neon_density_plots = site_posts %>% 
+  ggplot(aes(x = .epred, y = reorder(site_id, climate_zone), fill = climate_zone)) +
+  stat_density_ridges(quantile_lines = TRUE, quantiles = 0.5, alpha = 0.9, linewidth = 0.1) + 
+  scale_fill_viridis(direction = -1,
+                     breaks = seq(27, 1, by = -5)) +
+  labs(y = "",
+       x = "\u03bb",
+       fill = "Climate Zone") +
+  # geom_point(data = sample_medians,
+             # shape = "|") +
+  theme(text = element_text(size = 8),
+        legend.text = element_text(size = 8),
+        legend.key.size = unit(0.3, "cm")) +
+  guides(fill = guide_legend(override.aes = list(size = 0.1)),
+         shape = guide_legend(override.aes = list(size = 0.1)),
+         guide = guide_colourbar(reverse = TRUE)) +
+  NULL
+
+
+ggsave(neon_density_plots, dpi = 400, width = 3, height = 3, units = "in", file = "plots/neon_density_plots.jpg")
+
+
+sites_per_zone = site_posts %>% 
+  ggplot(aes(x = .epred, y = as.factor(climate_zone), group = site_id, fill = climate_zone)) +
+  stat_density_ridges(quantile_lines = TRUE, quantiles = 0.5, alpha = 0.9, linewidth = 0.1) + 
+  scale_fill_viridis(direction = -1,
+                     breaks = seq(27, 1, by = -5)) +
+  labs(y = "Climate Zone",
+       x = "\u03bb",
+       fill = "Climate Zone") +
+  # geom_point(data = sample_medians,
+  # shape = "|") +
+  theme(text = element_text(size = 8),
+        legend.text = element_text(size = 8),
+        legend.key.size = unit(0.3, "cm")) +
+  guides(fill = "none") +
+  NULL
+
+ggsave(sites_per_zone, dpi = 400, width = 3, height = 3, units = "in", file = "plots/sites_per_zone.jpg")
+
+
+average_zones = site_posts %>% 
+  group_by(.epred, climate_zone) %>% 
+  reframe(.epred = mean(.epred)) %>% 
+  ggplot(aes(x = .epred, y = as.factor(climate_zone), fill = climate_zone)) +
+  stat_density_ridges(quantile_lines = TRUE, quantiles = 0.5, alpha = 0.9, linewidth = 0.1) + 
+  scale_fill_viridis(direction = -1,
+                     breaks = seq(27, 1, by = -5)) +
+  labs(y = "Climate Zone",
+       x = "\u03bb",
+       fill = "Climate Zone") +
+  # geom_point(data = sample_medians,
+  # shape = "|") +
+  theme(text = element_text(size = 8),
+        legend.text = element_text(size = 8),
+        legend.key.size = unit(0.3, "cm")) +
+  guides(fill = "none") +
+  NULL
+
+ggsave(average_zones, dpi = 400, width = 2, height = 3, units = "in", file = "plots/average_zones.jpg")
+
+
+
+
+
+
+
+
+
+
+

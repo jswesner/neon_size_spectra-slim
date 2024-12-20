@@ -30,7 +30,6 @@ dat_inverts_clauset_xmins = dat_inverts_all %>% left_join(xmins_inverts_clauset)
 
 saveRDS(dat_inverts_clauset_xmins, file = "data/derived_data/dat_inverts_clauset_xmins.rds")
 
-
 # check cutoffs -----------------------------------------------------------
 
 dat_inverts %>% left_join(dat_inverts_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% 

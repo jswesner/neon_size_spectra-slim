@@ -11,7 +11,7 @@ theme_set(brms::theme_default())
 # load these
 model_list = readRDS(file = "models/model_list.rds")
 fitdat2 = readRDS(file = "data/fitdat2.rds") # raw re-sampled data
-fit_temp_om_gpp = model_list$`models/fit_temp_om_gpp_newxmin_sumnorm_clauset.rds`# bayesian model
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_updated12192024.rds")
 
 # 1) Wrangle  -------------------------------------------------------------
 
