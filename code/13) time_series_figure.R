@@ -37,19 +37,23 @@ sample_posts = fit_temp_om_gpp$data %>% glimpse %>%
   add_epred_draws(fit_temp_om_gpp, re_formula = NULL)
 
 sample_posts_summary = sample_posts %>% 
-  group_by(sample_id, site_id, date, mat_s, climate_zone, zone_title) %>% 
-  median_qi(.epred)
+  group_by(site_id, mat_s, climate_zone, zone_title, year) %>% 
+  median_qi(.epred) 
+
+
+
 
 one_site_per_zone = climate_zones %>% 
   group_by(climate_zone, zone_title) %>% 
   slice(1)
 
-global_mean_lambda = as_draws_df(fit_temp_om_gpp) %>% select(b_Intercept, starts_with("sd_")) %>% 
+global_mean_lambda = as_draws_df(fit_temp_om_gpp) %>% 
+  select(b_Intercept, starts_with("sd_")) %>% 
   mutate(.epred = b_Intercept +
            rnorm(nrow(.), 0, sd_sample_id__Intercept) +
            rnorm(nrow(.), 0, sd_site_id__Intercept)+
            rnorm(nrow(.), 0, sd_year__Intercept)) %>% 
-  expand_grid(site_id = one_site_per_zone %>% distinct(site_id) %>% pull()) %>%
+  expand_grid(site_id = dat_all %>% distinct(site_id) %>% pull()) %>%
   left_join(climate_zones) %>%
   expand_grid(date = seq(min(dat_all$date),
                          max(dat_all$date),
@@ -59,13 +63,75 @@ global_mean_lambda = as_draws_df(fit_temp_om_gpp) %>% select(b_Intercept, starts
           high50 = quantile(.epred, probs = 0.75),
           low95 = quantile(.epred, probs = 0.025),
           high95 = quantile(.epred, probs = 0.975),
-          .epred = median(.epred))
+          .epred = median(.epred)) %>% 
+  mutate(year = year(date))
+
+site_mean_lambda = fit_temp_om_gpp$data %>% 
+  select(-dw, -no_m2, xmin, xmax) %>% 
+  distinct(site_id, xmin, xmax, log_om_s, log_gpp_s, mat_s) %>% 
+  mutate(no_m2 = 1) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = ~(1|site_id)) %>%
+  left_join(climate_zones) %>%
+  expand_grid(date = seq(min(dat_all$date),
+                         max(dat_all$date),
+                         length.out = 2)) %>% 
+  group_by(site_id, date, climate_zone, zone_title) %>% 
+  reframe(low50 = quantile(.epred, probs = 0.25),
+          high50 = quantile(.epred, probs = 0.75),
+          low95 = quantile(.epred, probs = 0.025),
+          high95 = quantile(.epred, probs = 0.975),
+          .epred = median(.epred)) %>% 
+  mutate(year = year(date))
+
+
+sample_posts_summary %>% 
+  ggplot(aes(x = year, y = .epred)) +
+  guides(color = "none") +
+  facet_wrap(~site_id) +
+  geom_ribbon(data = site_mean_lambda, aes(ymin = low50, 
+                                             ymax = high50),
+              alpha = 0.25) +
+  geom_ribbon(data = site_mean_lambda, aes(ymin = low95,
+                                             ymax = high95),
+              alpha = 0.25) +
+  geom_pointrange(aes(color = site_id, ymin = .lower, ymax = .upper)) +
+  geom_line(aes(group = site_id)) +
+  theme_default() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(y = "\u03bb",
+       x = "Collection Date") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
+
+time_series_lines = sample_posts %>% 
+  group_by(site_id, year, .draw) %>% 
+  reframe(.epred = mean(.epred)) %>% 
+  filter(.draw <= 500) %>% 
+  ggplot(aes(x = year, y = .epred)) +
+  guides(color = "none") +
+  facet_wrap(~site_id) +
+  geom_line(aes(group = .draw), alpha = 0.1, linewidth = 0.1) +
+  geom_point(data = sample_posts_summary,
+                  shape = 21,
+                  fill = "white") +
+  theme_default() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(y = "\u03bb",
+       x = "Collection Date") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  theme(axis.text.x = element_text(angle = 90),
+        strip.text = element_text(size = 8))
+
+ggsave(time_series_lines, file = "plots/time_series_lines.jpg", width = 6, height = 7, dpi = 400)
 
 
 labels = dat_all %>% group_by(site_id) %>% filter(date == max(date))
 
 time_series_fig = sample_posts_summary %>% 
-  ggplot(aes(x = date, y = .epred)) +
+  ggplot(aes(x = year, y = .epred)) +
   # stat_lineribbon(data = global_mean_lambda, alpha = 0.1, .width = c(0.95), fill = "black",
                   # linewidth = 0.2) +
   # stat_lineribbon(data = global_mean_lambda, alpha = 0.1, .width = c(0.5), fill = "black",
