@@ -7,59 +7,14 @@ library(janitor)
 #1) load data (NEON body size data)
 dat_all = readRDS("data/derived_data/dat_all.rds")
 
-#2) fit prior predictive using sample_prior = "only" (note: a quicker way without varying intercepts is below)
-prior_sims = brm(dw | vreal(no_m2, xmin, xmax) ~ log_om_s*mat_s*log_gpp_s + (1 | sample_id) + (1 | year) + (1 | site_id),
-    data = dat_all,
-    stanvars = stanvars,    # required for truncated Pareto via isdbayes package
-    family = paretocounts(),# required for truncated Pareto via isdbayes package
-    prior = c(prior(normal(-1.5, 0.2), class = "Intercept"),
-              prior(normal(0, 0.1), class = "b"),
-              prior(exponential(7), class = "sd")),
-    iter = 1000, 
-    sample_prior = "only",
-    file = "models/prior_sims.rds",          # The model is already saved. This model will load, but not fit. It will only refit if the next line (file_refit) is removed.
-    file_refit = "on_change",
-    chains = 1)
 
-#3) plot prior regressions
-
-cond_priors = plot(conditional_effects(prior_sims, spaghetti = T, ndraws = 100, ask = F))  # get conditional effects
-
-# plot temp conditional effect
-cond_priors$mat_s +
-  labs(y = "\u03bb (ISD exponent)") 
-
-# plot om conditional effect
-cond_priors$log_om_s +
-  labs(y = "\u03bb (ISD exponent)") 
-
-# plot any other two-way conditional effects
-cond_priors$`log_om_s:log_gpp_s` +
-  labs(y = "\u03bb (ISD exponent)") 
-
-
-#4) plot prior lambdas
-# check sample specific lambdas
-
-prior_lambdas = prior_sims$data %>% 
-  select(-dw, -no_m2, -xmax, -xmin) %>%    # select out to make distinct sample grid (without individual size information)
-  distinct() %>% 
-  mutate(xmin = 0.003, xmax = 200000 , no_m2 = 1) %>% 
-  add_epred_draws(prior_sims, re_formula = NULL)
-
-
-prior_lambdas %>% 
-  ggplot(aes(x = mat_s, y = .epred)) + 
-  geom_point(shape = 21, alpha = 0.2)
-
-
-#5) Simulate priors without using brms (quicker but doesn't include varying intercepts). This allows for easy changes to the prior without having to use brm()
+#2) Simulate priors without using brms (quicker). This allows for easy changes to the prior without having to use brm()
 # simulate priors
-nsims = 100
-int_sd = 0.2   # standard deviation of the intercept
+nsims = 300
+int_sd = 0.5   # standard deviation of the intercept
 b_sd = 0.1     # standard deviation of the slopes (all betas)
 priors = tibble(iter = 1:nsims,
-                a = rnorm(nsims, -1.5, int_sd),
+                a = rnorm(nsims, -2, int_sd),
                 beta_mat = rnorm(nsims, 0, b_sd),
                 beta_om = rnorm(nsims, 0, b_sd),
                 beta_gpp = rnorm(nsims, 0, b_sd),
@@ -95,21 +50,26 @@ prior_sims_byhand = dat_all %>%
                                   log_gpp_s == max(log_gpp_s) ~ "High GPP",
                                   TRUE ~ "Median GPP")) %>% 
   left_join(facet_gpp) %>% 
-  left_join(facet_om)
+  left_join(facet_om) %>% 
+  group_by(iter) %>% 
+  mutate(r_year = rnorm(1, 0, rexp(1, 7)), # add varying intercepts
+         r_site = rnorm(1, 0, rexp(1, 7)),
+         r_sample = rnorm(1, 0, rexp(1, 7))) %>% 
+  mutate(lambda_varying = lambda + r_year + r_site + r_sample) %>% 
+  mutate(quantile_gpp = fct_relevel(quantile_gpp, "Low GPP", "Median GPP"),
+         quantile_om = fct_relevel(quantile_om, "Low OM", "Median OM"))
 
-
-
-#6) Plot priors
-prior_sims_byhand %>% 
-  ggplot(aes(x = mat_s, y = lambda, color = -log_om_s)) + 
-  geom_line(aes(group = iter), alpha = 0.3) + 
-  facet_grid(facet_gpp ~ facet_om, labeller = "label_parsed") +
+#3) Plot priors
+prior_pred = prior_sims_byhand %>% 
+  ggplot(aes(x = mat_s, y = lambda_varying, color = -log_om_s)) + 
+  geom_line(aes(group = iter), alpha = 0.1) + 
+  facet_grid(quantile_gpp ~ quantile_om) +
   labs(y = "\u03bb (ISD exponent)",
        title = "Prior Predictive") +
   scale_color_viridis() +
-  geom_abline(intercept = -1.3, slope = -0.1, color = "red")  # approximate slope from Pomeranz et al. (2022). Check as a reference.
+  guides(color = "none")
 
-
+ggsave(prior_pred, file = "plots/prior_pred.jpg", width = 6.5, height = 6.5)
 
 
 
