@@ -40,10 +40,11 @@ lineposts = tibble(x = seq(1, 1000, length.out = 50)) %>%
          prob_yx_lower = (1 - (x^(.lower + 1) - (xmin^(.lower + 1))) / ((xmax)^(.lower + 1) - (xmin^(.lower + 1)))),
          prob_yx_upper = (1 - (x^(.upper + 1) - (xmin^(.upper + 1))) / ((xmax)^(.upper + 1) - (xmin^(.upper + 1))))) 
 
-labels = tibble(label = c("\u03bb = -1",
+labels = tibble(label = c("\u03bb = -2",
                           "\u03bb = -1.5",
-                          "\u03bb = -2"),
-                y = c(20, 200, 1500)) %>% 
+                          "\u03bb = -1"),
+                y = c(20, 200, 1500),
+                group = c("-2", "-1.5", "-1")) %>% 
   mutate(x = 100)
 
 fig1a = lineposts %>% 
@@ -63,5 +64,25 @@ fig1a = lineposts %>%
              data = labels,
              size = 2.5)
 
-ggview::ggview(fig1a, width = 3.5, height = 3.5)
+# ggview::ggview(fig1a, width = 3.5, height = 3.5)
 ggsave(fig1a, file = "plots/fig1a.jpg", width = 3.5, height = 3.5, dpi = 500)
+
+
+lineposts %>% 
+  ggplot(aes(x = x)) +
+  geom_line(aes(y = prob_yx*3000 , group = group)) +
+  scale_x_log10() + 
+  # scale_y_log10() +
+  geom_point(data = sim_data, aes(y = order, size = x, color = x), shape = 1) +
+  coord_cartesian(ylim = c(1, NA)) +
+  labs(x = "mgDM Individual",
+       y = "Number of individuals >= x") +
+  scale_color_viridis(option = "E") +
+  guides(color = "none",
+         size = "none") +
+  scale_size(range=c(0.1, 2.5)) +
+  geom_label(aes(x = x, y = y, label = label),
+             data = labels,
+             size = 2.5) +
+  facet_wrap(~group)
+

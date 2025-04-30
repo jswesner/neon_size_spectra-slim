@@ -5,7 +5,7 @@ library(ggthemes)
 library(janitor)
 
 #1) load data (NEON body size data)
-dat_all = readRDS("data/derived_data/dat_all.rds")
+dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 
 
 #2) Simulate priors without using brms (quicker). This allows for easy changes to the prior without having to use brm()
@@ -29,7 +29,7 @@ facet_om = readRDS(file = "plots/facet_om.rds")
 
 
 # simulate prior predictive 
-prior_sims_byhand = dat_all %>% 
+prior_sims_byhand = dat_2022_clauset %>% 
   select(mat_s, site_id) %>% 
   distinct() %>%
   expand_grid(log_om_s = c(-1, 0, 1)) %>%  # add quantiles of gpp and om
@@ -69,7 +69,7 @@ prior_pred = prior_sims_byhand %>%
   scale_color_viridis() +
   guides(color = "none")
 
-ggsave(prior_pred, file = "plots/prior_pred.jpg", width = 6.5, height = 6.5)
+ggsave(prior_pred, file = "plots/fig_s5_prior_pred.jpg", width = 6.5, height = 6.5)
 
 
 

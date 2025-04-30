@@ -9,11 +9,13 @@ theme_set(brms::theme_default())
 neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct(siteID, lat, long) %>% 
   clean_names()
 
-temp_gpp_om = readRDS("data/derived_data/dat_all.rds") %>% 
-  ungroup %>% distinct(site_id, mean,
-                       gpp, mean_om) %>% 
+predictors = readRDS("data/predictors_scaled.rds") 
+
+temp_gpp_om = predictors %>% 
+  ungroup %>% distinct(site_id, temp_deg_c,
+                       gpp, om) %>% 
   left_join(neon_latlong) %>% 
-  pivot_longer(cols = c(gpp, mean_om, mean))
+  pivot_longer(cols = c(gpp, om, temp_deg_c))
 
 # load map data
 world <- map_data("world") %>% expand_grid(name = temp_gpp_om %>% distinct(name))
@@ -28,7 +30,7 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     geom_polygon(data = world, aes(x = long, y = lat, group = group), fill = "grey70") +
     geom_sf(color = "white", fill = "grey70") +
     geom_polygon(data = states, aes(x = long, y = lat, group = group), color = "white", fill = "grey70")  +
-    geom_point(data = temp_gpp_om %>% filter(name == "mean"), 
+    geom_point(data = temp_gpp_om %>% filter(name == "temp_deg_c"), 
                aes(x = long, y = lat, fill = value),
                size = 2,
                alpha = 0.9,
@@ -47,7 +49,8 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     NULL)
 
 #2) Get correlations
-abiotic_wide = readRDS("data/derived_data/dat_all.rds") %>% distinct(mat_s, log_gpp_s, log_om_s) 
+abiotic_wide = fit_temp_om_gpp$data %>% 
+  distinct(mat_s, log_gpp_s, log_om_s) 
 
 correlations = tibble(gppom = cor(abiotic_wide$log_gpp_s, abiotic_wide$log_om_s),
                       gpptemp = cor(abiotic_wide$log_gpp_s, abiotic_wide$mat_s),
@@ -89,9 +92,8 @@ correlation_plots = omtemp_plot/gpptemp_plot/gppom_plot
 #4) Combine map and correlation plots
 
 map_correlation_plot = map_temp + correlation_plots + 
-  plot_layout(widths = c(3, 1), heights = c(1, 1))
+  plot_layout(widths = c(3, 1), heights = c(1, 1)) 
 
-ggview::ggview(map_correlation_plot, width = 6.5, height = 8)
 ggsave(map_correlation_plot, file = "plots/ms_plots/map_correlation_plot.jpg", width = 6.5, height = 8)
 saveRDS(map_correlation_plot, file = "plots/ms_plots/map_correlation_plot.rds")
 

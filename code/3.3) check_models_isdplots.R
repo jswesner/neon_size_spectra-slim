@@ -8,9 +8,14 @@ library(viridis)
 theme_set(brms::theme_default())
 
 #1) Load models and data
-posts_sample_lambdas = readRDS(file = "posteriors/posts_sample_lambdas.rds")
 fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
 dat = as_tibble(fit_temp_om_gpp$data)
+
+posts_sample_lambdas = fit_temp_om_gpp$data %>% 
+  distinct(sample_id, mat_s, log_gpp_s, log_om_s, year, site_id, xmin, xmax) %>%
+  mutate(no_m2 = 1) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NULL) %>% 
+  mutate(mat = (mat_s*sd_temp) + mean_temp)
 
 #2) Resample data
 n_samples = 5000
@@ -29,13 +34,6 @@ dat_resampled_rank = dat %>%
   arrange(-dw) %>% 
   mutate(n_yx = 1:max(row_number())) %>% 
   ungroup()
-
-dat_resampled_rank %>%
-  filter(sample_id == 1) %>% 
-  ggplot(aes(x = dw, y = n_yx)) + 
-  geom_point() +
-  scale_y_log10() +
-  scale_x_log10()
 
 #3) ISD by sample ----------------------------------
 
@@ -77,10 +75,10 @@ sample_max = 133
 dat_sliced = dat_resampled_rank %>% 
   filter(sample_id <= sample_max) %>%
   group_by(sample_id) %>% 
-  slice_sample(n = 1000) %>% 
+  # slice_sample(n = 1000) %>% 
   left_join(site_ordered)
 
-plot_isd = isd_lines %>% 
+plot_isd_sample = isd_lines %>% 
   filter(sample_id <= sample_max) %>%
   select(-prob_yx, -lambda) %>% 
   pivot_wider(names_from = quantile, values_from = n_yx) %>% 
@@ -112,11 +110,9 @@ plot_isd = isd_lines %>%
        x = "mgDM") +
   NULL
 
-ggview::ggview(plot_isd, width = 6.5, height = 7)
-ggsave(plot_isd, width = 6.5, height = 7,
-       file = "plots/plot_isd.jpg", dpi = 300)
-saveRDS(plot_isd, file = "plots/plot_isd.rds")
-
+ggsave(plot_isd_sample, width = 6.5, height = 7,
+       file = "plots/plot_isd_sample.jpg", dpi = 300)
+saveRDS(plot_isd_sample, file = "plots/plot_isd_sample.rds")
 
 
 #4) ISD by site ----------------------------------
@@ -159,30 +155,32 @@ epred_draws_list_site = epred_draws_summary_site %>%
 temp_site = lapply(epred_draws_list_site, function(df) {
   df %>% expand_grid(x = 10^seq(log10(xmin), log10(xmax), length.out = 50)) %>% 
     mutate(prob_yx = (1 - (x^(lambda + 1) - (xmin^(lambda + 1))) / ((xmax)^(lambda + 1) - (xmin^(lambda + 1)))),
-           n_yx = prob_yx * n_samples) 
+           n_yx = prob_yx * n_site_samples) 
 })
 
 isd_lines_site = bind_rows(temp_site)
 
 dat_sliced_site = dat_resampled_rank_site %>% 
   group_by(site_id) %>% 
-  slice_sample(n = 1000)
+  # slice_sample(n = 5000) %>% 
+  group_by(site_id) %>% 
+  mutate(prob_yx = n_yx/max(n_yx))
 
-isd_lines_site %>% 
-  select(-prob_yx, -lambda) %>% 
-  pivot_wider(names_from = quantile, values_from = n_yx) %>% 
+plot_isd_site = isd_lines_site %>% 
+  select(-n_yx, -lambda) %>% 
+  pivot_wider(names_from = quantile, values_from = prob_yx) %>% 
   mutate(dw = x) %>%
   ggplot(aes(x = dw, y = .epred)) +
   geom_line() +
   geom_ribbon(aes(ymin = .lower, ymax = .upper),
               alpha = 0.4) +
-  geom_point(data = dat_sliced_site ,
-             aes(y = n_yx, size = dw,
+  geom_point(data = dat_sliced_site,
+             aes(y = prob_yx, size = dw,
                  color = dw),
              shape = 16) +
   scale_x_log10() +
   scale_y_log10() +
-  coord_cartesian(ylim = c(0.8, NA)) +
+  # coord_cartesian(ylim = c(0.8, NA)) +
   facet_wrap(~site_id) +
   scale_color_viridis(trans = "log",
                       breaks = c(0.01,  1, 100, 10000),
@@ -195,4 +193,7 @@ isd_lines_site %>%
          color = "none") +
   NULL
 
+ggsave(plot_isd_site, width = 6.5, height = 7,
+       file = "plots/plot_isd.jpg", dpi = 300)
+saveRDS(plot_isd_site, file = "plots/plot_isd.rds")
 
