@@ -7,7 +7,9 @@ theme_set(brms::theme_default())
 
 # load data
 neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct(siteID, lat, long) %>% 
-  clean_names()
+  clean_names() %>% 
+  mutate(long = case_when(site_id == "GUIL" ~ long + 0.5,
+                          TRUE ~ long))
 
 predictors = readRDS("data/predictors_scaled.rds") 
 
@@ -35,7 +37,8 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
                size = 2,
                alpha = 0.9,
                color = "black", shape = 21,
-               position = position_jitter(width = 2, height = 1, seed = 2323)) +
+               # position = position_jitter(width = 2, height = 1, seed = 2323)
+               ) +
     theme_void() +
     coord_sf(ylim = c(10, 68), xlim = c(-160, -68)) +
     labs(fill = "\u00b0C",
