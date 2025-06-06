@@ -43,7 +43,7 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     coord_sf(ylim = c(10, 68), xlim = c(-160, -68)) +
     labs(fill = "\u00b0C",
          title = "a) Site Map") +
-    scale_fill_viridis(option = "A") + 
+    scale_fill_viridis() + 
     theme(legend.position = c(0.25, 0.4),
           legend.key.size = unit(0.4, "cm"),
           legend.title = element_text(size = 8),
@@ -52,6 +52,8 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     NULL)
 
 #2) Get correlations
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+
 abiotic_wide = fit_temp_om_gpp$data %>% 
   distinct(mat_s, log_gpp_s, log_om_s) 
 
