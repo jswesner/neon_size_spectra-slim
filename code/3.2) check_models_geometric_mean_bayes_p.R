@@ -9,7 +9,7 @@ library(ggview)
 theme_set(brms::theme_default())
 
 # load these
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 # 1) Wrangle  -------------------------------------------------------------
 

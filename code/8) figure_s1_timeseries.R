@@ -9,7 +9,7 @@ library(ggh4x)
 library(viridis)
 library(rnaturalearth)
 
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 dat_2022_clauset = readRDS("data/dat_2022_clauset.rds") 
 

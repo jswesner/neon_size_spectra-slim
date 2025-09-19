@@ -5,7 +5,7 @@ library(isdbayes)
 # Literature Figure Comparisons -------------------------------------------
 theme_set(theme_default())
 
-fit_pareto = readRDS("models/fit_temp_om_gpp.rds")
+fit_pareto = readRDS("models/fit_temp_om_gpp_year.rds")
 
 predictors = readRDS("data/predictors_scaled.rds")
 

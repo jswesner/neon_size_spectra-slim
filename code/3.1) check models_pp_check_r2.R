@@ -9,7 +9,7 @@ library(patchwork)
 theme_set(brms::theme_default())
 
 # 1) load models
-mod = readRDS("models/fit_temp_om_gpp.rds")
+mod = readRDS("models/fit_temp_om_gpp_year.rds")
 
 # 2) get data
 dat = as_tibble(mod$data)

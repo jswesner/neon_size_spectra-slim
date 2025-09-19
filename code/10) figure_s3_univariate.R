@@ -78,3 +78,8 @@ uni_plot_dots = univariate_posts %>%
 
 saveRDS(uni_plot_dots, file = "plots/uni_plot_dots.rds")
 ggsave(uni_plot_dots, file = "plots/uni_plot_dots.jpg", width = 5, height = 5, dpi = 400)
+
+
+as_draws_df(fit_temp) %>% 
+  as_tibble() %>% 
+  reframe(prob_pos = sum(b_mat_s > 0)/max(nrow(.)))

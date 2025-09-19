@@ -8,7 +8,7 @@ library(janitor)
 library(ggtext)
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
@@ -21,8 +21,6 @@ mean_om = attributes(predictors$log_om_s)$`scaled:center`
 sd_om = attributes(predictors$log_om_s)$`scaled:scale`
 mean_gpp = attributes(predictors$log_gpp_s)$`scaled:center`
 sd_gpp = attributes(predictors$log_gpp_s)$`scaled:scale`
-
-
 
 # labels
 facet_gpp = readRDS(file = "plots/facet_gpp.rds")
@@ -245,3 +243,91 @@ ggsave(temp_twopanel, width = 6.5, height = 4.2,
 saveRDS(temp_twopanel, file = "plots/ms_plots/fig_3_temp_twopanel.rds")
 
 
+
+# temp by year ------------------------------------------------------------
+
+posts = fit_temp_om_gpp$data %>% 
+  distinct(year) %>% 
+  expand_grid(mat_s = seq(-2, 2, length.out = 40)) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(dat_2022_clauset$xmin),
+         xmax = max(dat_2022_clauset$xmax)) %>% 
+  expand_grid(log_om_s = c(0),
+              log_gpp_s = c(0)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = ~ (1 + log_om_s*mat_s*log_gpp_s  |year),
+                  ndraws = 500) %>% 
+  mutate(mat = (mat_s*sd_temp) + mean_temp) 
+
+posts_dots = fit_temp_om_gpp$data %>% 
+  distinct(year, site_id, sample_id, mat_s) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(dat_2022_clauset$xmin),
+         xmax = max(dat_2022_clauset$xmax)) %>% 
+  expand_grid(log_om_s = c(0),
+              log_gpp_s = c(0)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NULL,
+                  ndraws = 100) %>% 
+  group_by(year, site_id, sample_id, mat_s ) %>% 
+  median_qi(.epred) %>% 
+  mutate(mat = (mat_s*sd_temp) + mean_temp) 
+
+posts_dots_site = fit_temp_om_gpp$data %>% 
+  distinct(year, site_id, sample_id, mat_s) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(dat_2022_clauset$xmin),
+         xmax = max(dat_2022_clauset$xmax)) %>% 
+  expand_grid(log_om_s = c(0),
+              log_gpp_s = c(0)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NULL,
+                  ndraws = 100) %>% 
+  group_by(year, site_id, mat_s ) %>% 
+  median_qi(.epred) %>% 
+  mutate(mat = (mat_s*sd_temp) + mean_temp) 
+
+slopes = fit_temp_om_gpp$data %>% 
+  distinct(year) %>% 
+  expand_grid(mat_s = seq(0, 1, length.out = 2)) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(dat_2022_clauset$xmin),
+         xmax = max(dat_2022_clauset$xmax)) %>% 
+  expand_grid(log_om_s = c(0),
+              log_gpp_s = c(0)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = ~ (1 + log_om_s*mat_s*log_gpp_s  |year),
+                  ndraws = 500) %>% 
+  mutate(mat = (mat_s*sd_temp) + mean_temp) %>% 
+  ungroup %>% 
+  select(-.row, -.chain, -.iteration, -mat) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) 
+
+slopes_formatted = slopes %>% 
+  group_by(year) %>% 
+  median_qi(slope) %>% mutate(label = paste0(round(slope, 2),
+                                                    " (",
+                                                    round(.lower,2),
+                                                    ",",
+                                                    round(.upper, 2),
+                                                    ")"))
+
+prob_positive = slopes %>% 
+  group_by(year) %>% 
+  reframe(prob = sum(slope > 0)/max(.draw))
+
+temp_by_year = posts %>% 
+  ggplot(aes(x = mat, y = .epred, group = year)) + 
+  stat_lineribbon(.width = 0.95, alpha = 0.7, fill = "gray") +
+  facet_wrap(~year) +
+  guides(fill = "none") +
+  geom_pointinterval(data = posts_dots_site, aes(ymin = .lower, ymax = .upper),
+                     size = 0.03, linewidth = 0.2, shape = 20)  +
+  geom_point(data = posts_dots, 
+             size = 0.02, shape = ".", position = position_jitter(width = 0.2,
+                                                                  height = 0)) +
+  theme_default() +
+  labs(y = "\u03bb",
+       x = "Mean Annual Temperature (\u00b0C)") +
+  geom_text(data = slopes_formatted, aes(x = 5, y = -1, label = label),
+            size = 2.5)
+
+ggsave(temp_by_year, file = "plots/ms_plots/temp_by_year.jpg", width = 6, height = 6,
+       dpi = 400)

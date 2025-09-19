@@ -6,7 +6,7 @@ library(tidyverse)
 
 # load models (these are already fit)
 fit_temp = readRDS("models/fit_temp.rds")
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 # Re-fit models -----------------------------------------------------------
 # !!!! Each of the models below takes up to 24 hours to run. They were run on a cluster. Here, we've added them
@@ -17,21 +17,22 @@ fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 
 #2) fit main model
-# fit_temp_om_gpp = brm(dw | vreal(no_m2, xmin, xmax) ~ log_om_s*mat_s*log_gpp_s + (1 | sample_id) + (1 | year) + (1 | site_id),
-#                       data = dat_2022_clauset,
-#                       stanvars = stanvars,    # required for truncated Pareto via isdbayes package
-#                       family = paretocounts(),# required for truncated Pareto via isdbayes package
-#                       prior = c(prior(normal(-2, 0.5), class = "Intercept"),
-#                                 prior(normal(0, 0.2), class = "b"),
-#                                 prior(exponential(7), class = "sd")),
-#                       iter = 2000,
-#                       cores = 4,
-#                       threads = 12, 
-#                       chains = 4)
+# fit_temp_om_gpp_year = brm(dw | vreal(no_m2, xmin, xmax) ~ log_om_s*mat_s*log_gpp_s + (1 |site_id:sample_id) + (1 + log_om_s*mat_s*log_gpp_s|year),
+#                            data = dat_2022_clauset,
+#                            stanvars = stanvars,    # required for truncated Pareto via isdbayes package
+#                            family = paretocounts(),# required for truncated Pareto via isdbayes package
+#                            prior = c(prior(normal(-2, 0.5), class = "Intercept"),
+#                                      prior(normal(0, 0.2), class = "b"),
+#                                      prior(exponential(7), class = "sd")),
+#                            iter = 2000,
+#                            cores = 4,
+#                            threads = 12,
+#                            chains = 4)
 # 
-# saveRDS(fit_temp_om_gpp, file = "models/fit_temp_om_gpp.rds")
+# saveRDS(fit_temp_om_gpp_year, file = "models/fit_temp_om_gpp_year.rds")
 
 #2) fit submodel using the update function
 
-# fit_temp = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | sample_id) + (1 | year) + (1 | site_id))
-# saveRDS(fit_temp, file = "models/fit_temp.rds")
+fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sample_id) + (1 + mat_s | year),
+                       cores = 4, threads = 12, chains = 1, iter = 300)
+saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")

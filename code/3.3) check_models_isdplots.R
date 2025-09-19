@@ -8,8 +8,19 @@ library(viridis)
 theme_set(brms::theme_default())
 
 #1) Load models and data
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 dat = as_tibble(fit_temp_om_gpp$data)
+# load data
+predictors = readRDS("data/predictors_scaled.rds") %>% 
+  mutate(log_om = log(om))
+
+mean_temp = attributes(predictors$mat_s)$`scaled:center`
+sd_temp = attributes(predictors$mat_s)$`scaled:scale`
+mean_om = attributes(predictors$log_om_s)$`scaled:center`
+sd_om = attributes(predictors$log_om_s)$`scaled:scale`
+mean_gpp = attributes(predictors$log_gpp_s)$`scaled:center`
+sd_gpp = attributes(predictors$log_gpp_s)$`scaled:scale`
+
 
 posts_sample_lambdas = fit_temp_om_gpp$data %>% 
   distinct(sample_id, mat_s, log_gpp_s, log_om_s, year, site_id, xmin, xmax) %>%

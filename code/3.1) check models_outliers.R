@@ -8,7 +8,7 @@ library(isdbayes)
 theme_set(brms::theme_default())
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 # load data
 sample_size = readRDS("data/sample_size.rds")
