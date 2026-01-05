@@ -7,7 +7,6 @@ library(tidybayes)
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 #Re-running the code may not exactly replicate the dat_2022_clauset due to continuous updates by NEON and any algorithmic stochasticity (e.g., in estimate_xmins)
 
-
 # 1) load fish density posteriors (total number of fish per m2 per collection)
 fish_density = readRDS(file = "data/fish_density.rds") %>% as_tibble()
 fish = readRDS(file = "data/raw_data/fish.rds") # NEON FISH DATA list

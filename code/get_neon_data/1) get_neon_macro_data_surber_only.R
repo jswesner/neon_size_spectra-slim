@@ -48,8 +48,6 @@ MN.no.damage <- MN.lw %>%
                      "measurement")) %>%
   est_dw(fieldData = macro$inv_fieldData)
 
-
-
 # 3) filter out NA values in dw
 macro_dw <- MN.no.damage %>%
   filter(!is.na(dw), !is.na(no_m2)) 
@@ -58,18 +56,19 @@ nrow(MN.no.damage) / nrow(macro_dw)
 
 saveRDS(macro_dw, file = "data/macro_dw_raw.rds")
 
-macro_dw = readRDS(file = "data/macro_dw_raw.rds")
-# remove taxonomic information and tally density by size class
-macro_dw_sizebytaxa = macro_dw %>% 
-  group_by(siteID, collectDate, dw, family, genus, acceptedTaxonID) %>% 
-  reframe(no_m2 = mean(no_m2)) 
+stream_sites <- read_csv("data/sites.csv")
 
-saveRDS(macro_dw_sizebytaxa, file = "data/macro_dw_sizebytaxa.rds")
+macro_dw = readRDS(file = "data/macro_dw_raw.rds") 
 
 # remove taxonomic information and tally density by size class
-macro_dw_sizeonly = macro_dw %>% 
+macro_dw_sizeonly_surber = macro_dw %>% 
+  mutate(sampleID = str_remove(sampleID, "\\.SS")) %>% 
+  separate(sampleID, into = c("site", "date", "samplertype", "samplenumber"), 
+           remove = F) %>% 
+  filter(samplertype == "SURBER") %>% 
   group_by(siteID, collectDate, dw) %>% 
-  reframe(no_m2 = mean(no_m2)) 
+  reframe(no_m2 = mean(no_m2))
 
-saveRDS(macro_dw_sizeonly, file = "data/macro_dw_sizeonly.rds")
+saveRDS(macro_dw_sizeonly_surber, file = "data/macro_dw_sizeonly_surber.rds")
+
 
