@@ -19,13 +19,14 @@ sd_gpp = attributes(predictors$log_gpp_s)$`scaled:scale`
 # literature comparison
 
 lit <- read_csv("data/temp_summaries_table.csv") %>% 
-        filter(Include == "Y") %>% 
+  filter(Include == "Y") %>% 
+  filter(Author != "O'Gorman et al. 2017") %>% # remove b/c it uses species mean mass, not isd
   mutate(size_magnitude = round(log10(xmax) - log10(xmin),0),
          size_scale = size_magnitude*scale_km) %>% 
   group_by(Author, organisms, b_diff) %>% 
   mutate(id = cur_group_id())
 
-mod_best <- readRDS("models/fit_temp_om_gpp.rds")
+mod_best <- readRDS("models/fit_temp_om_gpp_year.rds")
 mod_summary = summary(mod_best)
 conds = tibble(mat_s = seq(min(fit_pareto$data$mat_s), max(fit_pareto$data$mat_s), length.out = 20)) %>% 
   mutate(log_gpp_s = 0,
@@ -48,14 +49,16 @@ conds_scaled = conds %>%
         group = "This Study") %>% 
   mutate(x_raw = (mat_s*sd_temp) + mean_temp)
 
-(lit_plot_unscaled = lit %>% 
+lit_to_plot = lit %>% 
   filter(Driver == "Temperature") %>% 
   filter(Author != "Gjoni et al. 2023") %>% 
   mutate(low = 0 - 0.5*direction,
          high = 0 + 0.5*direction,
          group = "Literature Estimates") %>% 
   pivot_longer(cols = c(low, high)) %>% 
-  mutate(x = case_when(name == "low" ~ temp_low, TRUE ~ temp_high)) %>% 
+  mutate(x = case_when(name == "low" ~ temp_low, TRUE ~ temp_high))
+
+(lit_plot_unscaled =  lit_to_plot %>% 
   ggplot(aes(x = x, y = value)) + 
   geom_line(aes(group = id), alpha = 0.5) +
   # facet_wrap(~Driver) + 
@@ -77,4 +80,23 @@ conds_scaled = conds %>%
 
 ggsave(lit_plot_unscaled, file = "plots/lit_plot_unscaled.jpg", 
        width = 5, height = 5)
+
+
+
+# revised figure ----------------------------------------------------------
+
+lit_effect_sizes = lit %>% 
+  filter(Driver == "Temperature") %>% 
+  filter(Author != "Gjoni et al. 2023") %>% 
+  mutate(low = 0 - 0.5*direction,
+         high = 0 + 0.5*direction,
+         group = "Literature Estimates") %>% 
+  mutate(b_diff_s = low - high,
+         temp_diff = temp_high - temp_low,
+         diff_s_per_degree = b_diff_s/temp_diff)
+
+lit_effect_sizes %>% 
+  ggplot(aes(y = Author, x = diff_s_per_degree)) +
+  geom_point()
+
 
