@@ -44,7 +44,7 @@ saveRDS(fish_dw_sizeonly, file = "data/fish_dw_sizeonly.rds")
 fish_dw_sizeonly %>% 
   filter(siteID == "ARIK") %>% 
   group_by(site_int) %>% 
-  sample_n(2000, replace = T, weight = no_m2) %>% 
+  sample_n(200, replace = T, weight = no_m2) %>%
   group_by(site_int) %>% 
   arrange(-dw) %>% 
   mutate(order = 1:max(row_number())) %>% 

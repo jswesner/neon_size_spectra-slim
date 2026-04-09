@@ -9,7 +9,7 @@ theme_set(brms::theme_default())
 neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct(siteID, lat, long) %>% 
   clean_names() %>% 
   mutate(long = case_when(site_id == "GUIL" ~ long + 0.5,
-                          TRUE ~ long))
+                          TRUE ~ long)) # add some noise so the Puerto Rico sites don't overlap.
 
 predictors = readRDS("data/predictors_scaled.rds") 
 
