@@ -30,14 +30,5 @@ post_medians %>%
   geom_point()
 
 
-sample_size_all = fit_temp_om_gpp$data %>% 
-  group_by(sample_id) %>% 
-  tally(name = "n_fit_temp_om_gpp") %>% 
-  left_join(sample_size %>% rename(n_new_data = n)) %>% 
-  left_join(dat_all %>% group_by(sample_id) %>% tally(name = "n_original_data"))
-
-
-
-
 
 

@@ -7,7 +7,7 @@ library(janitor)
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 #Re-running the code may not exactly replicate the dat_2022_clauset due to continuous updates by NEON and any algorithmic stochasticity (e.g., in estimate_xmins)
 
-neon_token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJodHRwczovL2RhdGEubmVvbnNjaWVuY2Uub3JnL2FwaS92MC8iLCJzdWIiOiJqZWZmd2VzbmVyQGdtYWlsLmNvbSIsInNjb3BlIjoicmF0ZTpwdWJsaWMiLCJpc3MiOiJodHRwczovL2RhdGEubmVvbnNjaWVuY2Uub3JnLyIsImV4cCI6MTc4NjU1MjkxMiwiaWF0IjoxNjI4ODcyOTEyLCJlbWFpbCI6ImplZmZ3ZXNuZXJAZ21haWwuY29tIn0.VnIZyX8yUCBfQyLOtS2hxr_tB4JW2CBzD46QezlxnIKCc1biYv9BbVZvl72obmKP1uXu4iK_c2pzDmBFW_S9oA"
+neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
 # 1) Download data ---------------------------------------------------------
 # assign("has_internet_via_proxy", TRUE, environment(curl::has_internet))
@@ -106,7 +106,7 @@ three_pass_data_wide = perPassFishSums %>%
 # write_csv(three_pass_data_wide, file = "data/three_pass_data_wide.csv")
 
 
-# Derive a L1 version of the fishfieldDataSum in the fieldData table
+# Derive an L1 version of the fishfieldDataSum in the fieldData table
 bulk_fieldData_fishSums <- fsh_bulkCount %>% select(eventID, boutEndDate, namedLocation, bulkFishCount) %>%
   group_by(eventID, boutEndDate, namedLocation) %>%
   summarize(bulk_sum = sum(bulkFishCount))

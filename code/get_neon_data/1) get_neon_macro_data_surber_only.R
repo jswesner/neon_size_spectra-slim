@@ -12,10 +12,9 @@ source("code/get_neon_data/inverts_dw-functions.R")
 
 # load Length Weight coefficient table (used in part C below)
 coeff <- read.csv("data/macro_lw_coeffs.csv")
-# neon_token <- source("C:/Users/jfpom/Documents/Wesner/NEON documents/neon_token_source.R")
 # stream_sites <- readRDS("data/streams.rds")
 
-neon_token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJodHRwczovL2RhdGEubmVvbnNjaWVuY2Uub3JnL2FwaS92MC8iLCJzdWIiOiJqZWZmd2VzbmVyQGdtYWlsLmNvbSIsInNjb3BlIjoicmF0ZTpwdWJsaWMiLCJpc3MiOiJodHRwczovL2RhdGEubmVvbnNjaWVuY2Uub3JnLyIsImV4cCI6MTc4NjU1MjkxMiwiaWF0IjoxNjI4ODcyOTEyLCJlbWFpbCI6ImplZmZ3ZXNuZXJAZ21haWwuY29tIn0.VnIZyX8yUCBfQyLOtS2hxr_tB4JW2CBzD46QezlxnIKCc1biYv9BbVZvl72obmKP1uXu4iK_c2pzDmBFW_S9oA"
+neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
 # 1) Download data ---------------------------------------------------------
 # assign("has_internet_via_proxy", TRUE, environment(curl::has_internet))
