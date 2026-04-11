@@ -8,6 +8,7 @@ library(tidyverse)
 dat_all = readRDS("data/derived_data/dat_all.rds")
 
 set.seed(1212124)
+
 dat = dat_all %>% 
   group_by(sample_id) %>% 
   sample_n(5000, weight = no_m2, replace = T)
@@ -30,7 +31,7 @@ dat_clauset_xmins = dat_all %>% left_join(xmins_clauset) %>%
   mutate(xmin = xmin_clauset,
          xmax = max(dw))
 
-saveRDS(dat_clauset_xmins, file = "data/derived_data/dat_clauset_xmins.rds")
+saveRDS(dat_clauset_xmins %>% filter(site_id != "SYCA"), file = "data/derived_data/dat_clauset_xmins.rds")
 
 dat_clauset_xmins = readRDS(file = "data/derived_data/dat_clauset_xmins.rds")
 

@@ -86,8 +86,8 @@ ggsave(lit_plot_unscaled, file = "plots/lit_plot_unscaled.jpg",
 # revised figure ----------------------------------------------------------
 
 lit_effect_sizes = lit %>% 
-  filter(Driver == "Temperature") %>% 
-  filter(Author != "Gjoni et al. 2023") %>% 
+  filter(Driver == "Temperature") %>%
+  # filter(Author != "Gjoni et al. 2023") %>% 
   mutate(low = 0 - 0.5*direction,
          high = 0 + 0.5*direction,
          group = "Literature Estimates") %>% 
@@ -97,6 +97,6 @@ lit_effect_sizes = lit %>%
 
 lit_effect_sizes %>% 
   ggplot(aes(y = Author, x = diff_s_per_degree)) +
-  geom_point()
+  geom_pointrange(aes(xmin = low, xmax = high))
 
 

@@ -30,13 +30,25 @@ facet_om = readRDS(file = "plots/facet_om.rds")
 
 # interaction_plot ---------------------------------
 #1) set up data grid/conditions for conditional_effects()
-log_gpp_s = tibble(log_gpp_s = c(-1, 0, 1))
+log_gpp_s_conds = quantile(predictors$log_gpp_s,probs = c(0.25, 0.5, 0.75))
+
+log_om_s_conds = quantile(predictors$log_om_s, probs = c(0.25, 0.5, 0.75))
+
 
 #2) Use conditional_effects to get posterior summaries
-int_plot = conditional_effects(fit_temp_om_gpp, effects = "mat_s:log_om_s", conditions = log_gpp_s)
+int_plot_conds = tibble(mat_s = seq(min(predictors$mat_s), max(predictors$mat_s),
+                               length.out = 30)) %>% 
+  expand_grid(log_gpp_s = log_gpp_s_conds) %>% 
+  expand_grid(log_om_s = log_om_s_conds) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(fit_temp_om_gpp$data$xmin),
+         xmax = max(fit_temp_om_gpp$data$xmax)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NA)
 
 #3) Wrangle conditional_effects/backtransform values from scaled to unscaled
-int_plot_data = int_plot$`mat_s:log_om_s` %>% as_tibble() %>% 
+int_plot_data = int_plot_conds %>% 
+  group_by(mat_s, log_gpp_s, log_om_s) %>% 
+  median_qi(.epred) %>% 
   mutate(mat = (mat_s*sd_temp) + mean_temp,
          gpp = (log_gpp_s*sd_gpp) + mean_gpp,
          om = (log_om_s*sd_om) + mean_om) %>% 
@@ -56,8 +68,8 @@ int_plot_data = int_plot$`mat_s:log_om_s` %>% as_tibble() %>%
                                   TRUE ~ -0.5),
            quantile_gpp = fct_relevel(quantile_gpp, "Low GPP", "Median GPP"),
            quantile_om = fct_relevel(quantile_om, "Low OM", "Median OM")) %>% 
-    ggplot(aes(x = mat, y = estimate__)) + 
-    geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.7) + 
+    ggplot(aes(x = mat, y = .epred)) + 
+    geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = 0.7) + 
     geom_line() +
     facet_grid(quantile_gpp~quantile_om) +
     theme_default() + 
@@ -70,12 +82,67 @@ int_plot_data = int_plot$`mat_s:log_om_s` %>% as_tibble() %>%
 )
 
 
-# ggview::ggview(interaction_plot, width = 4, height = 4)
 ggsave(interaction_plot, width = 4, height = 4,
        file = "plots/ms_plots/interaction_plot.jpg")
 saveRDS(interaction_plot,  file = "plots/ms_plots/interaction_plot.rds")
 
 
+
+# effect size across om and gpp -------------------------------------------
+
+slope_conds = int_plot_conds = tibble(mat_s = c(0, 1)) %>% 
+  expand_grid(log_gpp_s = log_gpp_s_conds) %>% 
+  expand_grid(log_om_s = log_om_s_conds) %>% 
+  mutate(no_m2 = 1,
+         xmin = min(fit_temp_om_gpp$data$xmin),
+         xmax = max(fit_temp_om_gpp$data$xmax)) %>% 
+  add_epred_draws(fit_temp_om_gpp, re_formula = NA)
+
+
+slope_conds %>% 
+  ungroup %>% 
+  select(ends_with("_s"), .draw, .epred) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) %>% 
+  group_by(log_gpp_s, log_om_s) %>% 
+  median_qi(slope)
+
+slope_conds %>% 
+  ungroup %>% 
+  select(ends_with("_s"), .draw, .epred) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) %>% 
+  group_by(log_gpp_s, log_om_s)  %>% 
+  reframe(prob_pos = sum(slope > 0)/max(.draw))
+
+slope_conds %>% 
+  ungroup %>% 
+  select(ends_with("_s"), .draw, .epred) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) %>% 
+  group_by(log_gpp_s, log_om_s) %>% 
+  select(log_gpp_s, log_om_s, .draw, slope) %>% 
+  mutate(log_gpp_s = round(log_gpp_s, 2),
+         log_om_s = round(log_om_s, 2)) %>% 
+  pivot_wider(names_from = log_om_s, values_from = slope) %>% 
+  mutate(diff = `0.62` - `-0.55`) %>% 
+  group_by(log_gpp_s) %>% 
+  median_qi(diff)
+
+
+slope_conds %>% 
+  ungroup %>% 
+  select(ends_with("_s"), .draw, .epred) %>% 
+  pivot_wider(names_from = mat_s, values_from = .epred) %>% 
+  mutate(slope = `1` - `0`) %>% 
+  group_by(log_gpp_s, log_om_s) %>% 
+  select(log_gpp_s, log_om_s, .draw, slope) %>% 
+  mutate(log_gpp_s = round(log_gpp_s, 2),
+         log_om_s = round(log_om_s, 2)) %>% 
+  pivot_wider(names_from = log_gpp_s, values_from = slope) %>% 
+  mutate(diff = `0.56` - `-0.98`) %>% 
+  group_by(log_om_s) %>% 
+  median_qi(diff)
 
 
 # interaction by year -----------------------------------------------------

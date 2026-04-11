@@ -32,6 +32,7 @@ saveRDS(dat_fish_clauset_xmins, file = "data/derived_data/dat_fish_clauset_xmins
 
 
 # check cutoffs -----------------------------------------------------------
+dat_fish_clauset_xmins = readRDS(file = "data/derived_data/dat_fish_clauset_xmins.rds")
 
 dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% 
                          rename(xmin_clauset = xmin)) %>% 
@@ -43,6 +44,7 @@ dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id
   NULL
 
 samples = unique(dat_fish$sample_id)
+
 dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id, xmin) %>% rename(xmin_clauset = xmin)) %>% 
   group_by(sample_id) %>% 
   sample_n(1000, weight = no_m2, replace = T) %>% 
@@ -52,3 +54,10 @@ dat_fish %>% left_join(dat_fish_clauset_xmins %>% ungroup %>% distinct(sample_id
   scale_x_log10() +
   geom_vline(aes(xintercept = xmin_clauset)) + 
   facet_wrap(~site_id)
+
+
+dat_fish_clauset_xmins %>% group_by(sample_id) %>% 
+  tally() %>% 
+  arrange(n)
+
+

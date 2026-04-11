@@ -91,3 +91,34 @@ resample %>%
 
 dat_2022_notculled %>% filter(sample_id == 751)
 dat_2022 %>% filter(site_id == "OKSR") %>% mutate(year = year(collect_date)) %>% distinct(year)
+
+# sum the no_m2 before and after culling. i.e., what proportion of the total sample was retained after culling?
+prop_retained_by_sample = dat_2024 %>% 
+  filter(collect_date <= "2023-01-01") %>% 
+  left_join(xmins_clauset) %>% 
+  group_by(sample_id) %>% 
+  mutate(retained = case_when(dw >= xmin_clauset ~ 1, T ~ 0),
+         no_m2_retained = no_m2*retained) %>% 
+  reframe(sum_original = sum(no_m2, na.rm = T),
+          sum_retained = sum(no_m2_retained, na.rm = T)) %>% 
+  filter(sum_retained > 0) %>% 
+  mutate(proportion_retained = sum_retained/sum_original)
+  
+prop_retained_by_sample %>% 
+  reframe(mean = mean(proportion_retained),
+          sd = sd(proportion_retained),
+          median = median(proportion_retained),
+          min = min(proportion_retained),
+          max = max(proportion_retained))
+
+# sum the no_m2 before and after culling for all individuals, not per sample
+dat_2024 %>% 
+  filter(collect_date <= "2023-01-01") %>% 
+  left_join(xmins_clauset) %>% 
+  # group_by(sample_id) %>% 
+  mutate(retained = case_when(dw >= xmin_clauset ~ 1, T ~ 0),
+         no_m2_retained = no_m2*retained) %>% 
+  reframe(sum_original = sum(no_m2, na.rm = T),
+          sum_retained = sum(no_m2_retained, na.rm = T)) %>% 
+  mutate(proportion_retained = sum_retained/sum_original)
+
