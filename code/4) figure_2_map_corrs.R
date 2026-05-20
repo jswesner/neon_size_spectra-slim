@@ -52,7 +52,7 @@ usa <- ne_countries(scale='medium',returnclass = 'sf')
     NULL)
 
 #2) Get correlations
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp.rds")
+fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 abiotic_wide = fit_temp_om_gpp$data %>% 
   distinct(mat_s, log_gpp_s, log_om_s) 

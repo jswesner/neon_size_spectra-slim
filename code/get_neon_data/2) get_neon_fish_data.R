@@ -103,7 +103,7 @@ three_pass_data_wide = perPassFishSums %>%
   left_join(mean_wetted_width %>% rename(siteID = site_id)) %>% 
   mutate(area_m2 = mean_wetted_width_m*measuredReachLength)
 
-# write_csv(three_pass_data_wide, file = "data/three_pass_data_wide.csv")
+write_csv(three_pass_data_wide, file = "data/three_pass_data_wide.csv")
 
 
 # Derive an L1 version of the fishfieldDataSum in the fieldData table

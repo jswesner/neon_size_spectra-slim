@@ -3,6 +3,7 @@ library(tidyverse)
 library(tidybayes)
 library(ggthemes)
 library(janitor)
+library(viridis)
 
 #1) load data (NEON body size data)
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")

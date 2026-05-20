@@ -167,7 +167,7 @@ preds %>%
 
 # check for temp model only
 
-mod_temp = readRDS("models/fit_temp_nosyca_wideprior.rds")
+mod_temp = readRDS("models/fit_temp_year.rds")
 dat_temp = mod_temp$data
 
 posts_sample_lambdas_temp = dat_temp %>% 
@@ -253,7 +253,6 @@ sim_posts_temp %>%
   facet_wrap(~site_id, scales = "free_y") +
   scale_color_colorblind() +
   NULL
-
 
 # r2
 dat_resampled %>% 

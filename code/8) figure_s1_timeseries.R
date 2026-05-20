@@ -13,6 +13,17 @@ fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 
 dat_2022_clauset = readRDS("data/dat_2022_clauset.rds") 
 
+# load data
+predictors = readRDS("data/predictors_scaled.rds") %>% 
+  mutate(log_om = log(om))
+
+mean_temp = attributes(predictors$mat_s)$`scaled:center`
+sd_temp = attributes(predictors$mat_s)$`scaled:scale`
+mean_om = attributes(predictors$log_om_s)$`scaled:center`
+sd_om = attributes(predictors$log_om_s)$`scaled:scale`
+mean_gpp = attributes(predictors$log_gpp_s)$`scaled:center`
+sd_gpp = attributes(predictors$log_gpp_s)$`scaled:scale`
+
 # wrangle posteriors --------------------------------------------------------
 
 data_grid_time = fit_temp_om_gpp$data %>% glimpse %>% 
@@ -157,13 +168,6 @@ time_series_lines_a = sample_posts %>%
         axis.title.x = element_blank()) +
   guides(fill = "none")
 
-
-layout <- c(
-  area(t = 3, l = 1, b = 5, r = 3),
-  area(t = 1, l = 3, b = 5, r = 6)
-)
-# Show the layout to make sure it looks as it should
-plot(layout)
 
 time_series_lines_a + map_lambda + plot_layout(design = layout)
 

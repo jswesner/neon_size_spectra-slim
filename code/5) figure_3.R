@@ -91,8 +91,8 @@ facets = unique(int_data$facet_omgpp)
 log_om_s_q = log_om_s
 
 sample_dots_summary = sample_dots %>% 
-  mutate(om_quantile = case_when(log_om_s <= min(log_om_s_q) ~ "Low",
-                                 log_om_s >= max(log_om_s_q) ~ "High",
+  mutate(om_quantile = case_when(as.numeric(log_om_s) <= min(log_om_s_q) ~ "Low",
+                                 as.numeric(log_om_s) >= max(log_om_s_q) ~ "High",
                                  TRUE ~ "Middle")) %>% 
   group_by(sample_id, mat_s, om_quantile) %>% 
   median_qi(.epred) %>% 
@@ -112,8 +112,8 @@ site_dots = fit_temp_om_gpp$data %>%
   mutate(no_m2 = 1) %>% 
   add_epred_draws(fit_temp_om_gpp, re_formula = ~ (1|site_id)) %>% 
   mutate(mat = (mat_s*sd_temp) + mean_temp) %>% 
-  mutate(om_quantile = case_when(log_om_s <= min(log_om_s_q) ~ "Low",
-                                 log_om_s >= max(log_om_s_q) ~ "High",
+  mutate(om_quantile = case_when(as.numeric(log_om_s) <= min(log_om_s_q) ~ "Low",
+                                 as.numeric(log_om_s) >= max(log_om_s_q) ~ "High",
                                  TRUE ~ "Middle")) %>% 
   group_by(mat, site_id, om_quantile) %>% 
   median_qi(.epred) %>% 
@@ -184,18 +184,18 @@ qlog_temp_s = quantile(unique(predictors$mat_s), probs = c(0.25, 0.5, 0.75), na.
 site_cutoffs = predictors %>% distinct(site_id, log_gpp_s, log_om_s, mat_s) %>% 
   mutate(low_gpp = min(qlog_gpp_s$log_gpp_s),
          high_gpp = max(qlog_gpp_s$log_gpp_s)) %>% 
-  mutate(quantile_gpp = case_when(log_gpp_s <= low_gpp ~ "Low GPP",
-                                  log_gpp_s >= high_gpp ~ "High GPP", 
+  mutate(quantile_gpp = case_when(as.numeric(log_gpp_s) <= low_gpp ~ "Low GPP",
+                                  as.numeric(log_gpp_s) >= high_gpp ~ "High GPP", 
                                   TRUE ~ "Median GPP")) %>% 
   mutate(low_om = min(qlog_om_s$log_om_s),
          high_om = max(qlog_om_s$log_om_s)) %>% 
-  mutate(quantile_om = case_when(log_om_s <= low_om ~ "Low OM",
-                                  log_om_s >= high_om ~ "High OM", 
+  mutate(quantile_om = case_when(as.numeric(log_om_s) <= low_om ~ "Low OM",
+                                 as.numeric(log_om_s) >= high_om ~ "High OM", 
                                   TRUE ~ "Median OM"))  %>% 
   mutate(low_temp = min(qlog_temp_s$log_temp_s),
          high_temp = max(qlog_temp_s$log_temp_s)) %>% 
-  mutate(quantile_temp = case_when(mat_s <= low_temp ~ "Low temp",
-                                 mat_s >= high_temp ~ "High temp", 
+  mutate(quantile_temp = case_when(as.numeric(mat_s) <= low_temp ~ "Low temp",
+                                   as.numeric(mat_s) >= high_temp ~ "High temp", 
                                  TRUE ~ "Median temp")) 
 
 #4) extract posteriors across data grid.
@@ -325,6 +325,7 @@ saveRDS(temp_twopanel, file = "plots/ms_plots/fig_3_temp_twopanel.rds")
 
 
 # temp by year ------------------------------------------------------------
+dat_2022_clauset = readRDS("data/dat_2022_clauset.rds")
 
 posts = fit_temp_om_gpp$data %>% 
   distinct(year) %>% 

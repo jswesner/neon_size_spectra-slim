@@ -1,4 +1,5 @@
 library(tidyverse)
+library(janitor)
 
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 
@@ -81,3 +82,26 @@ total_fish_afterculling = fish_raw %>%
 
 # total sizes
 total_macros_afterculling$sum + total_fish_afterculling
+
+# create predictors and sd/means
+predictors_scaled = readRDS("data/predictors_scaled.rds") %>% 
+  mutate(log_om = log(om))
+
+mean_temp = attributes(predictors_scaled$mat_s)$`scaled:center`
+sd_temp = attributes(predictors_scaled$mat_s)$`scaled:scale`
+mean_om = attributes(predictors_scaled$log_om_s)$`scaled:center`
+sd_om = attributes(predictors_scaled$log_om_s)$`scaled:scale`
+mean_gpp = attributes(predictors_scaled$log_gpp_s)$`scaled:center`
+sd_gpp = attributes(predictors_scaled$log_gpp_s)$`scaled:scale`
+
+predictors = predictors_scaled %>% mutate(mean_temp = mean_temp,
+                      sd_temp = sd_temp,
+                      mean_om = mean_om,
+                      sd_om = sd_om,
+                      mean_gpp = mean_gpp,
+                      sd_gpp = sd_gpp) %>% 
+  mutate(across(-site_id, as.numeric))
+
+write_csv(predictors, file = "data/predictors.csv")
+
+

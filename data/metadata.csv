@@ -1,0 +1,26 @@
+﻿file_name,variable,units,description
+"""data/dat_2022_clauset.rds""",dw,milligrams dry mass,individual dry mass of macroinvertebrates and fish
+"""data/dat_2022_clauset.rds""",no_m2,number per square meter,density of each individual dry mass value
+"""data/dat_2022_clauset.rds""",xmin,milligrams dry mass,minimum body size per sample_id in milligrams dry mass
+"""data/dat_2022_clauset.rds""",xmax,milligrams dry mass,maximum body size per sample_id in milligrams dry mass
+"""data/dat_2022_clauset.rds""",mat_s,unit scale: standard deviations from the mean,"standardized (z-score) mean annual temperature. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/dat_2022_clauset.rds""",log_gpp_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/dat_2022_clauset.rds""",log_om_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/dat_2022_clauset.rds""",sample_id,integer,unique number representing replicate samples. Each number corresponds to a unique collection date and site
+"""data/dat_2022_clauset.rds""",year,integer,year of collection
+"""data/dat_2022_clauset.rds""",site_id,string,four-letter NEON site code
+"""data/dat_2022_clauset.rds""",collect_date,"""yyyy-mm-dd""",Date of collection
+"""data/predictors.csv""",site_id,string,four-letter NEON site code
+"""data/predictors.csv""",log_om_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/predictors.csv""",log_gpp_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/predictors.csv""",mat_s,unit scale: standard deviations from the mean,"standardized (z-score) mean annual temperature. Raw values and conversion factors are in ""data/predictors.csv"""
+"""data/predictors.csv""",temp_deg_c,celsius,mean annual stream temperatures in degrees celsius
+"""data/predictors.csv""",om,grams per square meter,ash-free dry mass standing stock
+"""data/predictors.csv""",gpp,grams of carbon per square meter per year,Gross Primary Production (gC/m2/y)
+"""data/predictors.csv""",log_om,natural log-transformed grams per square meter,
+"""data/predictors.csv""",mean_temp,celsius,arithmetic mean of mean annual temperature (temp_deg_c) across NEON stream sites. This is used to transform the raw values to z-scores.
+"""data/predictors.csv""",sd_temp,standard deviation,standard deviation of mean annual temperature (temp_deg_c) across the NEON stream sites. This is used to transform the raw values to z-scores.
+"""data/predictors.csv""",mean_om,grams per square meter,arithmetic mean of organic matter standing stock across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
+"""data/predictors.csv""",sd_om,standard deviation,standard deviation of organic matter standing stock across the NEON stream sites. This is used to transform the raw values to z-scores.
+"""data/predictors.csv""",mean_gpp,grams of carbon per square meter per year,arithmetic mean of gross primary production across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
+"""data/predictors.csv""",sd_gpp,standard deviation,standard deviation of gross primary production across the NEON stream sites. This is used to transform the raw values to z-scores.

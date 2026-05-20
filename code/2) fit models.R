@@ -32,9 +32,9 @@ dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 
 #2) fit submodel using the update function
 
-# fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sample_id) + (1 + mat_s | year),
-#                        cores = 4, threads = 12, chains = 4, iter = 2000)
-# saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")
+fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sample_id) + (1 + mat_s | year),
+                       cores = 4, threads = 12, chains = 4, iter = 2000)
+saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")
 
 
 
@@ -77,10 +77,10 @@ dat_last = dat_2022_clauset %>%
 # fit_with just fish ------------------------------------------------------
 
 dat_fish = readRDS(file = "data/dat_2022_fish_clauset.rds")
-fit_fish = update(fit_temp_om_gpp, newdata = dat_fish, 
-                  chains = 1, iter = 1000, data2 = list(model = "last"))
-
-saveRDS(fit_fish, file = "models/fit_fish.rds")
+# fit_fish = update(fit_temp_om_gpp, newdata = dat_fish, 
+#                   chains = 1, iter = 1000, data2 = list(model = "last"))
+# 
+# saveRDS(fit_fish, file = "models/fit_fish.rds")
 
 
 # add Gaussian process for spatial autocorrelation ---------------------------------------------
@@ -93,10 +93,10 @@ neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct
 
 dat_lat_long = left_join(fit_temp_om_gpp_year$data, neon_latlong)
 
-fit_latlong = update(fit_temp_om_gpp_year, 
-                     formula = . ~ log_om_s * mat_s * log_gpp_s + (1 | site_id:sample_id) + (1 + log_om_s * mat_s * log_gpp_s | year) +
-                       gp(lat, long), newdata = dat_lat_long, 
-                     iter = 2000, chains = 4)
+# fit_latlong = update(fit_temp_om_gpp_year, 
+#                      formula = . ~ log_om_s * mat_s * log_gpp_s + (1 | site_id:sample_id) + (1 + log_om_s * mat_s * log_gpp_s | year) +
+#                        gp(lat, long), newdata = dat_lat_long, 
+#                      iter = 2000, chains = 4)
 
 saveRDS(fit_latlong, file = "models/fit_latlong.rds")
 

@@ -5,7 +5,6 @@ library(tidybayes)
 library(brms)
 library(ggthemes)
 library(isdbayes)
-library(ggview)
 theme_set(brms::theme_default())
 
 # load these
