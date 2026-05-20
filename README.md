@@ -8,11 +8,11 @@ freshwater streams are consistent across temperature and resource
 supply*.
 
 All figures and tables in the manuscript can be recreated by running the
-R scripts in the `code` folder. The scripts are named in order (e.g., 1,
-2, 3…), so that script 2 will not work without running script 1 first,
-and so forth.
+R scripts below. The scripts are named in order (e.g., 1, 2, 3…), so
+that script 2 will not work without running script 1 first, and so
+forth.
 
-The scripts provide the following:
+The scripts below are in the folder `code`:
 
 **1) choose priors.R**: Conducts prior predictive simulation.
 
@@ -37,7 +37,7 @@ Network (NEON)\] (<https://www.neonscience.org/>) using the
 `neonUtilities` package. Code to download and wrangle the raw data are
 in the folder `code/get_neon_data`.
 
-The scripts provide the following:
+The scripts below are in the folder `code/get_neon_data`:
 
 **1) get_neon_macro_data.R**: Downloads NEON data for macroinvertebrates
 using the `neonUtilities` package. Then wrangles data to get individual
