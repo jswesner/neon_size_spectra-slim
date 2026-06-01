@@ -53,6 +53,9 @@ dat_2024_clauset_xmins = dat_2024 %>%
   mutate(collect_date = min(collect_date)) %>% 
   ungroup
 
+saveRDS(dat_2024_clauset_xmins %>% filter(year <= 2022),
+        file = "data/dat_2022_clauset.rds")
+
 # check for low sample sizes
 dat_2024_clauset_xmins %>% 
   group_by(sample_id, xmin) %>% 
