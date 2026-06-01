@@ -11,7 +11,7 @@ library(ggtext)
 # make macros plot --------------------------------------------------------
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_macros.rds")
+fit_temp_om_gpp = readRDS("models/fit_macros.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
@@ -80,10 +80,10 @@ saveRDS(interaction_plot_macros,  file = "plots/interaction_plot_macros.rds")
 
 
 
-# make macros plot --------------------------------------------------------
+# make fish plot --------------------------------------------------------
 
 # load model
-fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_fish.rds")
+fit_temp_om_gpp = readRDS("models/fit_fish.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
