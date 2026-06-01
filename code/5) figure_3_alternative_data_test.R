@@ -91,7 +91,7 @@ for(i in 1:length(fit_list)){
 
 post_fits = bind_rows(post_list)
 
-saveRDS(post_fits, file = "posteriors/post_fits.rds")
+# saveRDS(post_fits, file = "posteriors/post_fits.rds")
 
 # get posts for full model to plot behind the alternative fits
 mods = sapply(fit_list, function(x) unique(x$model))
@@ -102,7 +102,7 @@ full_model = data_list[[1]] %>%
 
 # wrangle posteriors --------------------------------------------------------------------
 
-post_fits = readRDS(file = "posteriors/post_fits.rds")
+# post_fits = readRDS(file = "posteriors/post_fits.rds")
 
 post_fits_summarized = post_fits %>% 
   group_by(mat_s, log_gpp_s, log_om_s, model) %>% 
