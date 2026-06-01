@@ -69,3 +69,33 @@ macroinvertebrate data to only samples from Surber samplers.
 **6) cull_xmin…**: Estimates $x_{min}$, the minimum body size for which
 the data follow a power law. Then culls the data below that size. This
 produces the primary data that is used to fit ISD models.
+
+## Packages
+
+    #>          package     version
+    #> 1      bayesplot 1.15.0.9000
+    #> 2           brms      2.23.1
+    #> 3        cowplot       1.2.0
+    #> 4          ggh4x       0.3.1
+    #> 5        ggimage       0.3.5
+    #> 6        ggplot2       4.0.3
+    #> 7       ggridges       0.5.7
+    #> 8         ggtext       0.1.2
+    #> 9       ggthemes       5.2.0
+    #> 10           hms       1.1.4
+    #> 11      isdbayes       0.1.0
+    #> 12       janitor       2.2.1
+    #> 13         knitr        1.51
+    #> 14     lubridate       1.9.5
+    #> 15 neonUtilities       3.0.3
+    #> 16     patchwork       1.3.2
+    #> 17      poweRlaw       1.0.0
+    #> 18        readxl       1.4.5
+    #> 19          renv       1.2.3
+    #> 20     rmarkdown        2.31
+    #> 21 rnaturalearth       1.2.0
+    #> 22         rstan      2.32.7
+    #> 23          rsvg       2.7.0
+    #> 24     tidybayes       3.0.7
+    #> 25     tidyverse       2.0.0
+    #> 26       viridis       0.6.5
