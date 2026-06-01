@@ -1,3 +1,7 @@
+# Download raw macroinvertebrate data from NEON - surber collections only.
+# NOTE: to get current data, users will need a NEON API token.
+# Download code is silenced for now unless users have a token.
+
 library(neonUtilities)
 library(tidyverse)
 library(lubridate)
@@ -13,7 +17,7 @@ source("code/get_neon_data/inverts_dw-functions.R")
 coeff <- read.csv("data/macro_lw_coeffs.csv")
 # stream_sites <- readRDS("data/streams.rds")
 
-neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
+# neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
 # 1) Download data ---------------------------------------------------------
 # assign("has_internet_via_proxy", TRUE, environment(curl::has_internet))
