@@ -1,3 +1,7 @@
+# Download raw fish data from NEON.
+# NOTE: to get current data, users will need a NEON API token.
+# Download code is silenced for now unless users have a token.
+
 library(neonUtilities)
 library(tidyverse)
 library(lubridate)
@@ -7,7 +11,7 @@ library(janitor)
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 #Re-running the code may not exactly replicate the dat_2022_clauset due to continuous updates by NEON and any algorithmic stochasticity (e.g., in estimate_xmins)
 
-neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
+# neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
 # 1) Download data ---------------------------------------------------------
 # assign("has_internet_via_proxy", TRUE, environment(curl::has_internet))
