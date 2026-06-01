@@ -16,8 +16,6 @@ source("code/get_neon_data/inverts_dw-functions.R")
 # load Length Weight coefficient table (used in part C below)
 coeff <- read.csv("data/macro_lw_coeffs.csv")
 
-# stream_sites <- readRDS("data/streams.rds")
-
 # neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
 # 1) Download data ---------------------------------------------------------

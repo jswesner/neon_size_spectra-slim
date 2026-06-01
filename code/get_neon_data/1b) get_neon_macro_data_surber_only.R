@@ -15,7 +15,6 @@ dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 source("code/get_neon_data/inverts_dw-functions.R")
 # load Length Weight coefficient table (used in part C below)
 coeff <- read.csv("data/macro_lw_coeffs.csv")
-# stream_sites <- readRDS("data/streams.rds")
 
 # neon_token = readRDS("data/neon_token.rds") #!!!Users will need their own token.
 
@@ -57,8 +56,6 @@ macro_dw <- MN.no.damage %>%
 nrow(MN.no.damage) / nrow(macro_dw)
 
 saveRDS(macro_dw, file = "data/macro_dw_raw.rds")
-
-stream_sites <- read_csv("data/sites.csv")
 
 macro_dw = readRDS(file = "data/macro_dw_raw.rds") 
 
