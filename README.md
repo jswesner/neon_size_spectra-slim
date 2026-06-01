@@ -26,9 +26,18 @@ to fit them, as we did).
 **3.1-3) check_models….R**: Posterior predictive checks of the models
 from step 2.
 
-**4-12)…**: Create figures in the manuscript and SI.
+**4-12)…**: Creates figures in the manuscript and SI.
 
 **13-14)…**: Refits models with only fish or only inverts.
+
+**15) interaction plot fish and macros.R**: Creates figures for SI
+interaction plot
+
+**sampler_types.R**: Refits models with only inverts collected from
+Surber samplers
+
+**isd_plots.R**: Creates ISD plots for each site, averaged over
+collections
 
 ## Raw data processing
 
