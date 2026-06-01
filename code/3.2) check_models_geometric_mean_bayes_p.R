@@ -1,3 +1,4 @@
+# posterior predictive model check. compares how well the model estimates empirical geometric mean body sizes
 library(rstan)
 library(tidyverse)
 library(janitor)
