@@ -76,21 +76,6 @@ resample %>%
   scale_y_log10() +
   facet_wrap(~site_id)
 
-# save with different year cutoffs
-# saveRDS(dat_2024_clauset_xmins, file = "data/dat_2024_clauset.rds")
-# saveRDS(dat_2024_clauset_xmins %>% filter(year <= 2022), 
-        # file = "data/dat_2022_clauset.rds")
-# saveRDS(dat_2024_clauset_xmins %>% filter(year >= 2022), 
-#         file = "data/dat_20232024_clauset.rds")
-# 
-# saveRDS(dat_2024 %>%
-#           left_join(predictors) %>% 
-#           mutate(year = as.integer(year(collect_date))) %>%
-#           filter(year <= 2022), 
-#         file = "data/dat_2022_notculled.rds")
-
-dat_2022_notculled %>% filter(sample_id == 751)
-dat_2022 %>% filter(site_id == "OKSR") %>% mutate(year = year(collect_date)) %>% distinct(year)
 
 # sum the no_m2 before and after culling. i.e., what proportion of the total sample was retained after culling?
 prop_retained_by_sample = dat_2024 %>% 
