@@ -169,5 +169,3 @@ time_series_lines_a = sample_posts %>%
   guides(fill = "none")
 
 
-time_series_lines_a + map_lambda + plot_layout(design = layout)
-
