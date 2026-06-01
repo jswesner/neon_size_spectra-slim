@@ -69,41 +69,5 @@ three_pass_population = as_draws_df(three_pass_model@stanfit) %>%
          no_fish_per_m2_upper = .upper_threepass/area_m2,
          raw_total_per_m2 = total_fish/area_m2)
 
-three_pass_population %>% 
-  ggplot(aes(x = no_fish_per_m2)) + 
-  geom_histogram() +
-  scale_x_log10()
-
-three_pass_population %>% 
-  ggplot(aes(x = raw_total_per_m2, y = no_fish_per_m2)) +
-  geom_point() +
-  geom_linerange(aes(ymin = no_fish_per_m2_lower, ymax = no_fish_per_m2_upper)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  facet_wrap(~siteID) +
-  geom_abline()
-
-# post_fish_density = as_draws_df(three_pass_model@stanfit) %>% 
-#   select(contains("_state")) %>% 
-#   mutate(.draw = 1:nrow(.)) %>% 
-#   pivot_longer(cols = contains("site_int")) %>% 
-#   clean_names() %>% 
-#   mutate(value = exp(beta_state_intercept + value)) %>%
-#   select(name, value, draw) %>% 
-#   mutate(site_int = as.factor(parse_number(name))) %>% #get original group names
-#   left_join(three_pass_data_wide %>% ungroup %>% 
-#               distinct(site_int, reach_id, mean_wetted_width_m, measured_reach_length, collect_date) %>% 
-#               mutate(site_int = as.factor(site_int))) %>% 
-#   mutate(site_id = str_sub(reach_id, 1, 4)) %>% 
-#   group_by(site_id) %>% 
-#   mutate(median = median(value)) %>% 
-#   group_by(site_int) %>% 
-#   mutate(fill_color = median(value),
-#          no_fish_per_m2 = value/(mean_wetted_width_m*measured_reach_length))
-# 
-# 
-# fish_density = post_fish_density %>% 
-#   group_by(site_int, collect_date, reach_id, site_id) %>%
-#   median_qi(no_fish_per_m2) 
 
 saveRDS(three_pass_population, file = "data/fish_density.rds")
