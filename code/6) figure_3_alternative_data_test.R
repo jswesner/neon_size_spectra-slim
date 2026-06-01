@@ -1,3 +1,5 @@
+# remake Fig 3 with alternate data, like only fish, only macors, only first dates, etc.
+# See how much the patterns change relative to the main fig. 3
 library(isdbayes)
 library(tidybayes)
 library(brms)
