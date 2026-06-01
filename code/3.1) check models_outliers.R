@@ -1,3 +1,5 @@
+# tests how lambda varies with sample size
+# n = unique body sizes in a sample from sample_size.rds
 library(rstan)
 library(tidyverse)
 library(janitor)
@@ -13,7 +15,7 @@ fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 # load data
 sample_size = readRDS("data/sample_size.rds")
 dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
-dat_all = readRDS("data/dat_2024.rds") %>% filter(collect_date <= "2023-01-01")
+dat_all = readRDS(file = "data/dat_2022_clauset.rds")
 
 post_medians = fit_temp_om_gpp$data %>% select(-dw, -no_m2) %>% 
   distinct() %>%
