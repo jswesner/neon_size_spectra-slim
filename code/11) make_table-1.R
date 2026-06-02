@@ -8,7 +8,6 @@ theme_set(theme_default())
 
 predictors = readRDS("data/predictors.rds")
 
-predictors_scaled
 
 predictors %>% 
   distinct(site_id,
