@@ -3,9 +3,9 @@
 
 # Temperature and resource supply drive continental variation in size structure of freshwater food webs
 
-This page provides data and code for *Gjoni et al. Size spectra in
-freshwater streams are consistent across temperature and resource
-supply*.
+This page provides data and code for *Gjoni et al.* *Temperature and
+resource supply drive continental variation in size structure of
+freshwater food webs*.
 
 All figures and tables in the manuscript can be recreated by running the
 R scripts below. The scripts are named in order (e.g., 1, 2, 3…), so
@@ -81,30 +81,311 @@ produces the primary data that is used to fit ISD models.
 
 ## Packages
 
-    #>          package     version
-    #> 1      bayesplot 1.15.0.9000
-    #> 2           brms      2.23.1
-    #> 3        cowplot       1.2.0
-    #> 4          ggh4x       0.3.1
-    #> 5        ggimage       0.3.5
-    #> 6        ggplot2       4.0.3
-    #> 7       ggridges       0.5.7
-    #> 8         ggtext       0.1.2
-    #> 9       ggthemes       5.2.0
-    #> 10           hms       1.1.4
-    #> 11      isdbayes       0.1.0
-    #> 12       janitor       2.2.1
-    #> 13         knitr        1.51
-    #> 14     lubridate       1.9.5
-    #> 15 neonUtilities       3.0.3
-    #> 16     patchwork       1.3.2
-    #> 17      poweRlaw       1.0.0
-    #> 18        readxl       1.4.5
-    #> 19          renv       1.2.3
-    #> 20     rmarkdown        2.31
-    #> 21 rnaturalearth       1.2.0
-    #> 22         rstan      2.32.7
-    #> 23          rsvg       2.7.0
-    #> 24     tidybayes       3.0.7
-    #> 25     tidyverse       2.0.0
-    #> 26       viridis       0.6.5
+| package       | version     |
+|:--------------|:------------|
+| bayesplot     | 1.15.0.9000 |
+| brms          | 2.23.1      |
+| cowplot       | 1.2.0       |
+| ggh4x         | 0.3.1       |
+| ggimage       | 0.3.5       |
+| ggplot2       | 4.0.3       |
+| ggridges      | 0.5.7       |
+| ggtext        | 0.1.2       |
+| ggthemes      | 5.2.0       |
+| hms           | 1.1.4       |
+| isdbayes      | 0.1.0       |
+| janitor       | 2.2.1       |
+| knitr         | 1.51        |
+| lubridate     | 1.9.5       |
+| neonUtilities | 3.0.3       |
+| patchwork     | 1.3.2       |
+| poweRlaw      | 1.0.0       |
+| readxl        | 1.4.5       |
+| renv          | 1.2.3       |
+| rmarkdown     | 2.31        |
+| rnaturalearth | 1.2.0       |
+| rstan         | 2.32.7      |
+| rsvg          | 2.7.0       |
+| tidybayes     | 3.0.7       |
+| tidyverse     | 2.0.0       |
+| viridis       | 0.6.5       |
+
+## Data Files and metadata
+
+    #> Rows: 257 Columns: 4
+    #> ── Column specification ────────────────────────────────────────────────────────
+    #> Delimiter: ","
+    #> chr (4): file_name, variable, units, description
+    #> 
+    #> ℹ Use `spec()` to retrieve the full column specification for this data.
+    #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+| file_name | variable | units | description |
+|:---|:---|:---|:---|
+| classified_coordinates.csv | lat | decimal degrees | latitude of NEON site |
+| classified_coordinates.csv | long | decimal degrees | longitude of NEON site |
+| classified_coordinates.csv | siteID | character | NEON site name |
+| dat_2022_clauset.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2022_clauset.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2022_clauset.rds | log_gpp_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset.rds | log_om_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset.rds | mat_s | unit scale: standard deviations from the mean | standardized (z-score) mean annual temperature. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2022_clauset.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| dat_2022_clauset.rds | site_id | string | four-letter NEON site code |
+| dat_2022_clauset.rds | xmax | milligrams dry mass | maximum body size per sample_id in milligrams dry mass |
+| dat_2022_clauset.rds | xmin | milligrams dry mass | minimum body size per sample_id in milligrams dry mass |
+| dat_2022_clauset.rds | year | integer | year of collection |
+| dat_2022_clauset_surber.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2022_clauset_surber.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2022_clauset_surber.rds | gpp | grams of carbon per square meter per year | Gross Primary Production (gC/m2/y) |
+| dat_2022_clauset_surber.rds | log_gpp_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset_surber.rds | log_om_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset_surber.rds | mat_s | unit scale: standard deviations from the mean | standardized (z-score) mean annual temperature. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_clauset_surber.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2022_clauset_surber.rds | om | grams per square meter | ash-free dry mass standing stock |
+| dat_2022_clauset_surber.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| dat_2022_clauset_surber.rds | site_id | string | four-letter NEON site code |
+| dat_2022_clauset_surber.rds | temp_deg_c | degrees celsius | mean annual stream temperature |
+| dat_2022_clauset_surber.rds | xmax | milligrams dry mass | maximum body size per sample_id in milligrams dry mass |
+| dat_2022_clauset_surber.rds | xmin | milligrams dry mass | minimum body size per sample_id in milligrams dry mass |
+| dat_2022_clauset_surber.rds | xmin_clauset | milligrams dry mass | minimum body size per sample_id in milligrams dry mass as estimated by estimate_xmin() function |
+| dat_2022_clauset_surber.rds | year | integer | year of collection |
+| dat_2022_fish_clauset.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2022_fish_clauset.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2022_fish_clauset.rds | log_gpp_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_fish_clauset.rds | log_om_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_fish_clauset.rds | mat_s | unit scale: standard deviations from the mean | standardized (z-score) mean annual temperature. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_fish_clauset.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2022_fish_clauset.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| dat_2022_fish_clauset.rds | site_id | string | four-letter NEON site code |
+| dat_2022_fish_clauset.rds | taxon | string | id for “fish” of “macro” |
+| dat_2022_fish_clauset.rds | xmax | milligrams dry mass | maximum body size per sample_id in milligrams dry mass |
+| dat_2022_fish_clauset.rds | xmin | milligrams dry mass | minimum body size per sample_id in milligrams dry mass |
+| dat_2022_fish_clauset.rds | xmin_clauset | milligrams dry mass | minimum body size per sample_id in milligrams dry mass as estimated by estimate_xmin() function |
+| dat_2022_fish_clauset.rds | year | integer | year of collection |
+| dat_2022_macros_clauset.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2022_macros_clauset.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2022_macros_clauset.rds | log_gpp_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_macros_clauset.rds | log_om_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_macros_clauset.rds | macro_id | integer | id for individual macroinvertebrate collection |
+| dat_2022_macros_clauset.rds | mat_s | unit scale: standard deviations from the mean | standardized (z-score) mean annual temperature. Raw values and conversion factors are in “data/predictors.csv” |
+| dat_2022_macros_clauset.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2022_macros_clauset.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| dat_2022_macros_clauset.rds | site_id | string | four-letter NEON site code |
+| dat_2022_macros_clauset.rds | xmax | milligrams dry mass | maximum body size per sample_id in milligrams dry mass |
+| dat_2022_macros_clauset.rds | xmin | milligrams dry mass | minimum body size per sample_id in milligrams dry mass |
+| dat_2022_macros_clauset.rds | xmin_clauset | milligrams dry mass | minimum body size per sample_id in milligrams dry mass as estimated by estimate_xmin() function |
+| dat_2022_macros_clauset.rds | year | integer | year of collection |
+| dat_2024_macros.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2024_macros.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2024_macros.rds | macro_id | integer | id for individual macroinvertebrate collection |
+| dat_2024_macros.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2024_macros.rds | site_id | string | four-letter NEON site code |
+| dat_2024_surber.rds | collect_date | “yyyy-mm-dd” | Date of collection |
+| dat_2024_surber.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| dat_2024_surber.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| dat_2024_surber.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| dat_2024_surber.rds | site_id | string | four-letter NEON site code |
+| fish.rds | NA | list | raw downloaded NEON fish electrofishing data with 12 list objects. For full description, see: <https://data.neonscience.org/data-products/DP1.20107.001> |
+| fish_density.rds | 1 | integer | number of fish caught in electrofishing pass 1 |
+| fish_density.rds | 2 | integer | number of fish caught in electrofishing pass 2 |
+| fish_density.rds | 3 | integer | number of fish caught in electrofishing pass 3 |
+| fish_density.rds | .lower_threepass | numeric | lower 95% CrI of total number of fish in reach (not corrected for area) |
+| fish_density.rds | .upper_threepass | numeric | lower 95% CrI of total number of fish in reach (not corrected for area) |
+| fish_density.rds | area_m2 | square meters | area of stream sampled |
+| fish_density.rds | boutEndDate | “yyyy-mm-dd hh:mm:ss” | End date of electrofishing |
+| fish_density.rds | domainID | string | Unique identifier of the NEON domain |
+| fish_density.rds | eventID | string | An identifier for the set of information associated with the event, which includes information about the place and time of the event |
+| fish_density.rds | increased | string | Identifier (Y/N) indicating if the number of fish increased in the 3rd pass versus the 1st pass. |
+| fish_density.rds | mean_wetted_width_m | meters | mean wetted width of NEON stream sampling site |
+| fish_density.rds | measuredReachLength | meters | length of reach sampled per three-pass removal sampling |
+| fish_density.rds | n | integer | count |
+| fish_density.rds | namedLocation | string | Name of the measurement location in the NEON database |
+| fish_density.rds | no_fish_per_m2 | numeric | Posterior median of total number of fish per square meter |
+| fish_density.rds | no_fish_per_m2_lower | numeric | lower 95% CrI of total number of fish per square meter |
+| fish_density.rds | no_fish_per_m2_upper | numeric | lower 95% CrI of total number of fish per square meter |
+| fish_density.rds | pop_threepass | numeric | Posterior median of total number of fish in reach (not corrected for area) |
+| fish_density.rds | raw_total_per_m2 | numeric | Sum of the three pass totals divided by area_m2 |
+| fish_density.rds | sd_wetted_width_m | standard deviation | standard deviation of wetted width measures of NEON stream |
+| fish_density.rds | site_int | integer | sample id for electrofishing |
+| fish_density.rds | siteID | string | NEON site name |
+| fish_density.rds | targetTaxaPresent | string | Indicator of whether the sample contained individuals of the target taxa |
+| fish_density.rds | total_fish | integer | sum number of fish across all 3 passes |
+| fish_dw_sizeonly.rds | boutEndDate | “yyyy-mm-dd hh:mm:ss” | The end date of the entire bout |
+| fish_dw_sizeonly.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| fish_dw_sizeonly.rds | no_fish_per_m2 | numeric | Posterior median of total number of fish per square meter |
+| fish_dw_sizeonly.rds | no_fish_per_m2_lower | numeric | lower 95% CrI of total number of fish per square meter |
+| fish_dw_sizeonly.rds | no_fish_per_m2_upper | numeric | lower 95% CrI of total number of fish per square meter |
+| fish_dw_sizeonly.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| fish_dw_sizeonly.rds | site_int | integer | sample id for electrofishing |
+| fish_dw_sizeonly.rds | siteID | character | NEON site name |
+| macro.rds | NA | list | raw downloaded NEON benthic macroinvertebrate data with 10 list objects. For full description, see: <https://data.neonscience.org/data-products/DP1.20120.001> |
+| macro_dw_raw.rds | a | numeric | parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_dw_raw.rds | acceptedTaxonID | string | Accepted species code, based on one or more sources |
+| macro_dw_raw.rds | b | numeric | parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_dw_raw.rds | benthicArea | square meters | Area of the benthos sampled |
+| macro_dw_raw.rds | class | string | The scientific name of the class in which the taxon is classified |
+| macro_dw_raw.rds | collectDate | “yyyy-mm-dd” | Date of collection |
+| macro_dw_raw.rds | dataQF | string | Data quality flag |
+| macro_dw_raw.rds | distinctTaxon | string | y/n: Taxon is known to be distinct within the sample, used for species richness metrics |
+| macro_dw_raw.rds | domainID | string | Unique identifier of the NEON domain |
+| macro_dw_raw.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| macro_dw_raw.rds | dw_units | string | units of dry mass of macroinvertebrates and fish |
+| macro_dw_raw.rds | estimatedTotalCount | numeric | Estimated total count of individuals within a sample, of given taxon, life stage, and size class |
+| macro_dw_raw.rds | family | string | The scientific name of the family in which the taxon is classified |
+| macro_dw_raw.rds | formula | string | length mass regression equation |
+| macro_dw_raw.rds | formula_type | integer | 1 = M = aL^b, 2 = M = exp(a + b log(L) |
+| macro_dw_raw.rds | genus | string | The scientific name of the genus in which the organism is classified |
+| macro_dw_raw.rds | identificationHistoryID | string | Identifier for linking records related to this identification history |
+| macro_dw_raw.rds | identificationQualifier | string | A standard term to express the determiner’s doubts about the Identification |
+| macro_dw_raw.rds | identificationReferences | string | A list of sources (concatenated and semicolon separated) used to derive the specific taxon concept; including field guide editions, books, or versions of NEON keys used |
+| macro_dw_raw.rds | identificationRemarks | string | Comments or notes about the identification |
+| macro_dw_raw.rds | identifiedBy | string | An identifier for the technician who identified the specimen |
+| macro_dw_raw.rds | identifiedDate | dateTime | Date on which the sample, individual, or specimen was identified |
+| macro_dw_raw.rds | immatureSpecimen | string | Sample contains immature specimen(s) for which target level of identification cannot be achieved |
+| macro_dw_raw.rds | indeterminateSpecies | string | Sample contains specimen(s) not well-described in the literature, not all taxa for a group are included in the literature, or observed characters are such that they do not fit described taxa. See accompanying identificationRemarks |
+| macro_dw_raw.rds | individualCount | unsigned integer | Number of individuals of the same type |
+| macro_dw_raw.rds | infraclass | string | The scientific name of the infraclass in which the taxon is classified |
+| macro_dw_raw.rds | infraorder | string | The scientific name of the infraorder in which the taxon is classified |
+| macro_dw_raw.rds | infraspecificEpithet | string | The infraspecific epithet (scientific name below the rank of species) of the scientific name applied to the taxon |
+| macro_dw_raw.rds | invertebrateLifeStage | string | Macroinvertebrate stage of development (larva, pupa, adult) |
+| macro_dw_raw.rds | L_units | string | Units of length (mm) |
+| macro_dw_raw.rds | laboratoryName | string | Name of the laboratory or facility that is processing the sample |
+| macro_dw_raw.rds | morphospeciesID | string | Identifier for morphospecies |
+| macro_dw_raw.rds | namedLocation | string | Name of the measurement location in the NEON database |
+| macro_dw_raw.rds | no_m2 | numeric | number of individuals per square meter: round(estimatedTotalCount / benthicArea) |
+| macro_dw_raw.rds | order | string | The scientific name of the order in which the taxon is classified |
+| macro_dw_raw.rds | phylum | string | The scientific name of the phylum or division in which the taxon is classified |
+| macro_dw_raw.rds | publicationDate | dateTime | Date of data publication on the NEON data portal |
+| macro_dw_raw.rds | qcChecked | string | Whether or not QC procedure was performed |
+| macro_dw_raw.rds | release | string | Identifier for data release |
+| macro_dw_raw.rds | sampleCode | string | Barcode of a sample |
+| macro_dw_raw.rds | sampleCondition | string | Condition of a sample |
+| macro_dw_raw.rds | sampleID | string | Identifier for sample |
+| macro_dw_raw.rds | scientificName | string | Scientific name, associated with the taxonID. This is the name of the lowest level taxonomic rank that can be determined |
+| macro_dw_raw.rds | siteID | string | NEON site code |
+| macro_dw_raw.rds | sizeCategory | string | Categorical size class of an individual or sample |
+| macro_dw_raw.rds | sizeClass | unsigned integer | Size class of individual(s) |
+| macro_dw_raw.rds | slideID | string | Unique identifier associated with each slide per sampleID or subsampleID |
+| macro_dw_raw.rds | specificEpithet | string | The specific epithet (second part of the species name) of the scientific name applied to the taxon |
+| macro_dw_raw.rds | subclass | string | The scientific name of the subclass in which the taxon is classified |
+| macro_dw_raw.rds | subfamily | string | The scientific name of the subfamily in which the organism is classified |
+| macro_dw_raw.rds | suborder | string | The scientific name of the suborder in which the taxon is classified |
+| macro_dw_raw.rds | subphylum | string | The scientific name of the subphylum in which the taxon is classified |
+| macro_dw_raw.rds | subsamplePercent | real | Percent of the total sample contained in the subsample |
+| macro_dw_raw.rds | subtribe | string | The scientific name of the subtribe in which the taxon is classified |
+| macro_dw_raw.rds | superfamily | string | The scientific name of the superfamily in which the taxon is classified |
+| macro_dw_raw.rds | superorder | string | The scientific name of the superorder in which the taxon is classified |
+| macro_dw_raw.rds | targetTaxaPresent | string | Indicator of whether the sample contained individuals of the target taxa |
+| macro_dw_raw.rds | taxonDatabaseID | string | Unique identifier for the taxon within the database |
+| macro_dw_raw.rds | taxonDatabaseName | string | Name of the taxonomic database |
+| macro_dw_raw.rds | taxonRank | string | The lowest level taxonomic rank that can be determined for the individual or specimen |
+| macro_dw_raw.rds | taxonRankQualifier | string | Reason why the specimen is not identified to a lower taxonomic rank |
+| macro_dw_raw.rds | tribe | string | The scientific name of the tribe in which the taxon is classified |
+| macro_dw_raw.rds | uid | string | Unique ID within NEON database; an identifier for the record |
+| macro_dw_sizebytaxa.rds | acceptedTaxonID | string | Accepted species code, based on one or more sources |
+| macro_dw_sizebytaxa.rds | collectDate | “yyyy-mm-dd” | Date of collection |
+| macro_dw_sizebytaxa.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| macro_dw_sizebytaxa.rds | family | string | The scientific name of the family in which the taxon is classified |
+| macro_dw_sizebytaxa.rds | genus | string | The scientific name of the genus in which the organism is classified |
+| macro_dw_sizebytaxa.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| macro_dw_sizebytaxa.rds | siteID | character | NEON site name |
+| macro_dw_sizeonly.rds | collectDate | “yyyy-mm-dd” | Date of collection |
+| macro_dw_sizeonly.rds | dw | milligrams dry mass | individual dry mass of macroinvertebrates and fish |
+| macro_dw_sizeonly.rds | no_m2 | number per square meter | density of each individual dry mass value |
+| macro_dw_sizeonly.rds | siteID | character | NEON site name |
+| macro_lw_coeffs.csv | a | numeric | parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | a_max | numeric | maximum parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | a_min | numeric | minimum parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | a_SE | numeric | standard error parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | b | numeric | parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | b_max | numeric | maximum parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | b_min | numeric | minimum parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | b_SE | numeric | standard error parameter for length mass regression equation: |
+| M = aL^b |  |  |  |
+| macro_lw_coeffs.csv | class | string | The scientific name of the class in which the taxon is classified |
+| macro_lw_coeffs.csv | dw_units | string | units of dry mass of macroinvertebrates and fish |
+| macro_lw_coeffs.csv | family | string | The scientific name of the family in which the taxon is classified |
+| macro_lw_coeffs.csv | formula | string | The scientific name of the family in which the taxon is classified |
+| macro_lw_coeffs.csv | formula_type | integer | 1 = M = aL^b, 2 = M = exp(a + b log(L) |
+| macro_lw_coeffs.csv | genus | string | The scientific name of the genus in which the organism is classified |
+| macro_lw_coeffs.csv | L_units | string | Units of length (mm) |
+| macro_lw_coeffs.csv | n | integer | count |
+| macro_lw_coeffs.csv | notes | string | notes about length-weight equations |
+| macro_lw_coeffs.csv | order | string | The scientific name of the order in which the taxon is classified |
+| macro_lw_coeffs.csv | source | string | source for length-weight regression equation and parameters |
+| macro_lw_coeffs.csv | subphylum | string | The scientific name of the subphylum in which the taxon is classified |
+| macro_lw_coeffs.csv | taxon | string | id for “fish” of “macro” |
+| mean_wetted_width.rds | mean_wetted_width_m | meters | mean wetted width of NEON stream sampling site |
+| mean_wetted_width.rds | sd_wetted_width_m | standard deviation | standard deviation of wetted width measures of NEON stream |
+| mean_wetted_width.rds | site_id | string | four-letter NEON site code |
+| predictors.csv | gpp | grams of carbon per square meter per year | Gross Primary Production (gC/m2/y) |
+| predictors.csv | log_gpp_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in “data/predictors.csv” |
+| predictors.csv | log_om | natural log-transformed grams per square meter | NA |
+| predictors.csv | log_om_s | unit scale: standard deviations from the mean of natural log-transformed data | standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in “data/predictors.csv” |
+| predictors.csv | mat_s | unit scale: standard deviations from the mean | standardized (z-score) mean annual temperature. Raw values and conversion factors are in “data/predictors.csv” |
+| predictors.csv | mean_gpp | grams of carbon per square meter per year | arithmetic mean of gross primary production across the 22 NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | mean_om | grams per square meter | arithmetic mean of organic matter standing stock across the 22 NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | mean_temp | celsius | arithmetic mean of mean annual temperature (temp_deg_c) across NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | om | grams per square meter | ash-free dry mass standing stock |
+| predictors.csv | sd_gpp | standard deviation | standard deviation of gross primary production across the NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | sd_om | standard deviation | standard deviation of organic matter standing stock across the NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | sd_temp | standard deviation | standard deviation of mean annual temperature (temp_deg_c) across the NEON stream sites. This is used to transform the raw values to z-scores. |
+| predictors.csv | site_id | string | four-letter NEON site code |
+| predictors.csv | temp_deg_c | celsius | mean annual stream temperatures in degrees celsius |
+| sample_size.rds | n | integer | count |
+| sample_size.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| site_lat_longs.csv | lat | decimal degrees | latitude of NEON site |
+| site_lat_longs.csv | long | decimal degrees | longitude of NEON site |
+| site_lat_longs.csv | siteID | character | NEON site name |
+| temp_summaries_table.csv | Author | string | Author of article |
+| temp_summaries_table.csv | b_diff | numeric | absolute change in lambda across environmental gradient |
+| temp_summaries_table.csv | b_high | numeric | maximum lambda value |
+| temp_summaries_table.csv | b_low | numeric | minimum lambda value |
+| temp_summaries_table.csv | direction | numeric | same as b_diff but not absolute, shows positive or negative direction of change |
+| temp_summaries_table.csv | Driver | string | Studied cause of change in lambda |
+| temp_summaries_table.csv | error | numeric | error of change in lambda |
+| temp_summaries_table.csv | error_type | string | units of error |
+| temp_summaries_table.csv | Include | string | y/n identifier to include in graph or not |
+| temp_summaries_table.csv | Method | string | method used to estimate lambda |
+| temp_summaries_table.csv | Notes | string | notes about literature measurements |
+| temp_summaries_table.csv | organisms | string | dominant organisms studied (e.g., fish, macroinvertebrates, etc.) |
+| temp_summaries_table.csv | prop_diff | numeric | proportional change across environmental gradient |
+| temp_summaries_table.csv | scale_km | numeric | approximate range in km of field study range |
+| temp_summaries_table.csv | System | string | Ecosystem of study |
+| temp_summaries_table.csv | Temp Range | string | range of degrees, if temperature. |
+| temp_summaries_table.csv | temp_high | celsius | highest experimental temperature |
+| temp_summaries_table.csv | temp_low | celsius | lowest experimental temperature |
+| temp_summaries_table.csv | x_units | string | units of mass |
+| temp_summaries_table.csv | xmax | numeric | maximum measured mass |
+| temp_summaries_table.csv | xmin | numeric | minimum measured mass |
+| three_pass_data_wide.csv | 1 | integer | number of fish caught in electrofishing pass 1 |
+| three_pass_data_wide.csv | 2 | integer | number of fish caught in electrofishing pass 2 |
+| three_pass_data_wide.csv | 3 | integer | number of fish caught in electrofishing pass 3 |
+| three_pass_data_wide.csv | area_m2 | square meters | area of stream sampled |
+| three_pass_data_wide.csv | boutEndDate | “yyyy-mm-dd hh:mm:ss” | The end date of the entire bout |
+| three_pass_data_wide.csv | domainID | string | Unique identifier of the NEON domain |
+| three_pass_data_wide.csv | eventID | string | An identifier for the set of information associated with the event, which includes information about the place and time of the event |
+| three_pass_data_wide.csv | increased | string | Identifier (Y/N) indicating if the number of fish increased in the 3rd pass versus the 1st pass. |
+| three_pass_data_wide.csv | mean_wetted_width_m | meters | mean wetted width of NEON stream sampling site |
+| three_pass_data_wide.csv | measuredReachLength | meters | length of reach sampled per three-pass removal sampling |
+| three_pass_data_wide.csv | n | integer | count |
+| three_pass_data_wide.csv | namedLocation | string | Name of the measurement location in the NEON database |
+| three_pass_data_wide.csv | sd_wetted_width_m | standard deviation | standard deviation of wetted width measures of NEON stream |
+| three_pass_data_wide.csv | site_int | integer | sample id for electrofishing |
+| three_pass_data_wide.csv | siteID | character | NEON site name |
+| three_pass_data_wide.csv | targetTaxaPresent | string | Indicator of whether the sample contained individuals of the target taxa |
+| xmins_clauset.rds | sample_id | integer | unique number representing replicate samples. Each number corresponds to a unique collection date and site |
+| xmins_clauset.rds | site_id | string | four-letter NEON site code |
+| xmins_clauset.rds | xmin_clauset | milligrams dry mass | minimum body size per sample_id in milligrams dry mass as estimated by estimate_xmin() function |
+| xmins_clauset.rds | year | integer | year of collection |

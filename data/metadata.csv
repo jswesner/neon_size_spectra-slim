@@ -1,4 +1,4 @@
-file_name,variable,units,description
+ï»¿file_name,variable,units,description
 classified_coordinates.csv,lat,decimal degrees,latitude of NEON site
 classified_coordinates.csv,long,decimal degrees,longitude of NEON site
 classified_coordinates.csv,siteID,character,NEON site name
@@ -72,13 +72,13 @@ fish_density.rds,.lower_threepass,numeric,lower 95% CrI of total number of fish 
 fish_density.rds,.upper_threepass,numeric,lower 95% CrI of total number of fish in reach (not corrected for area)
 fish_density.rds,area_m2,square meters,area of stream sampled
 fish_density.rds,boutEndDate,"""yyyy-mm-dd hh:mm:ss""",End date of electrofishing
-fish_density.rds,domainID,string,Unique identifier of the NEON domain
-fish_density.rds,eventID,string,"An identifier for the set of information associated with the event, which includes information about the place and time of the event"
+fish_density.rds,domainID,string,UniqueÂ identifierÂ ofÂ theÂ NEONÂ domain
+fish_density.rds,eventID,string,"AnÂ identifierÂ forÂ theÂ setÂ ofÂ informationÂ associatedÂ withÂ theÂ event,Â whichÂ includesÂ informationÂ aboutÂ theÂ placeÂ andÂ timeÂ ofÂ theÂ event"
 fish_density.rds,increased,string,Identifier (Y/N) indicating if the number of fish increased in the 3rd pass versus the 1st pass.
 fish_density.rds,mean_wetted_width_m,meters,mean wetted width of NEON stream sampling site
 fish_density.rds,measuredReachLength,meters,length of reach sampled per three-pass removal sampling
 fish_density.rds,n,integer,count
-fish_density.rds,namedLocation,string,Name of the measurement location in the NEON database
+fish_density.rds,namedLocation,string,NameÂ ofÂ theÂ measurementÂ locationÂ inÂ theÂ NEONÂ database
 fish_density.rds,no_fish_per_m2,numeric,Posterior median of total number of fish per square meter
 fish_density.rds,no_fish_per_m2_lower,numeric,lower 95% CrI of total number of fish per square meter
 fish_density.rds,no_fish_per_m2_upper,numeric,lower 95% CrI of total number of fish per square meter
@@ -100,10 +100,10 @@ fish_dw_sizeonly.rds,siteID,character,NEON site name
 macro.rds,NA,list,"raw downloaded NEON benthic macroinvertebrate data with 10 list objects. For full description, see: https://data.neonscience.org/data-products/DP1.20120.001"
 macro_dw_raw.rds,a,numeric,"parameter for length mass regression equation: 
 M = aL^b"
-macro_dw_raw.rds,acceptedTaxonID,string,"Accepted species code, based on one or more sources"
+macro_dw_raw.rds,acceptedTaxonID,string,"AcceptedÂ speciesÂ code,Â basedÂ onÂ oneÂ orÂ moreÂ sources"
 macro_dw_raw.rds,b,numeric,"parameter for length mass regression equation: 
 M = aL^b"
-macro_dw_raw.rds,benthicArea,square meters,Area of the benthos sampled
+macro_dw_raw.rds,benthicArea,square meters,AreaÂ ofÂ theÂ benthosÂ sampled
 macro_dw_raw.rds,class,string,The scientific name of the class in which the taxon is classified
 macro_dw_raw.rds,collectDate,"""yyyy-mm-dd""",Date of collection
 macro_dw_raw.rds,dataQF,string,Data quality flag
@@ -115,7 +115,7 @@ macro_dw_raw.rds,estimatedTotalCount,numeric,"Estimated total count of individua
 macro_dw_raw.rds,family,string,The scientific name of the family in which the taxon is classified
 macro_dw_raw.rds,formula,string,length mass regression equation
 macro_dw_raw.rds,formula_type,integer,"1 = M = aL^b, 2 = M = exp(a + b log(L)"
-macro_dw_raw.rds,genus,string,The scientific name of the genus in which the organism is classified
+macro_dw_raw.rds,genus,string,TheÂ scientificÂ nameÂ ofÂ theÂ genusÂ inÂ whichÂ theÂ organismÂ isÂ classified
 macro_dw_raw.rds,identificationHistoryID,string,Identifier for linking records related to this identification history
 macro_dw_raw.rds,identificationQualifier,string,A standard term to express the determiner's doubts about the Identification
 macro_dw_raw.rds,identificationReferences,string,"A list of sources (concatenated and semicolon separated) used to derive the specific taxon concept; including field guide editions, books, or versions of NEON keys used"
@@ -163,11 +163,11 @@ macro_dw_raw.rds,taxonRank,string,The lowest level taxonomic rank that can be de
 macro_dw_raw.rds,taxonRankQualifier,string,Reason why the specimen is not identified to a lower taxonomic rank
 macro_dw_raw.rds,tribe,string,The scientific name of the tribe in which the taxon is classified
 macro_dw_raw.rds,uid,string,Unique ID within NEON database; an identifier for the record
-macro_dw_sizebytaxa.rds,acceptedTaxonID,string,"Accepted species code, based on one or more sources"
+macro_dw_sizebytaxa.rds,acceptedTaxonID,string,"AcceptedÂ speciesÂ code,Â basedÂ onÂ oneÂ orÂ moreÂ sources"
 macro_dw_sizebytaxa.rds,collectDate,"""yyyy-mm-dd""",Date of collection
 macro_dw_sizebytaxa.rds,dw,milligrams dry mass,individual dry mass of macroinvertebrates and fish
 macro_dw_sizebytaxa.rds,family,string,The scientific name of the family in which the taxon is classified
-macro_dw_sizebytaxa.rds,genus,string,The scientific name of the genus in which the organism is classified
+macro_dw_sizebytaxa.rds,genus,string,TheÂ scientificÂ nameÂ ofÂ theÂ genusÂ inÂ whichÂ theÂ organismÂ isÂ classified
 macro_dw_sizebytaxa.rds,no_m2,number per square meter,density of each individual dry mass value
 macro_dw_sizebytaxa.rds,siteID,character,NEON site name
 macro_dw_sizeonly.rds,collectDate,"""yyyy-mm-dd""",Date of collection
@@ -195,7 +195,7 @@ macro_lw_coeffs.csv,dw_units,string,units of dry mass of macroinvertebrates and 
 macro_lw_coeffs.csv,family,string,The scientific name of the family in which the taxon is classified
 macro_lw_coeffs.csv,formula,string,The scientific name of the family in which the taxon is classified
 macro_lw_coeffs.csv,formula_type,integer,"1 = M = aL^b, 2 = M = exp(a + b log(L)"
-macro_lw_coeffs.csv,genus,string,The scientific name of the genus in which the organism is classified
+macro_lw_coeffs.csv,genus,string,TheÂ scientificÂ nameÂ ofÂ theÂ genusÂ inÂ whichÂ theÂ organismÂ isÂ classified
 macro_lw_coeffs.csv,L_units,string,Units of length (mm)
 macro_lw_coeffs.csv,n,integer,count
 macro_lw_coeffs.csv,notes,string,notes about length-weight equations
@@ -252,7 +252,7 @@ three_pass_data_wide.csv,3,integer,number of fish caught in electrofishing pass 
 three_pass_data_wide.csv,area_m2,square meters,area of stream sampled
 three_pass_data_wide.csv,boutEndDate,"""yyyy-mm-dd hh:mm:ss""",The end date of the entire bout
 three_pass_data_wide.csv,domainID,string,Unique identifier of the NEON domain
-three_pass_data_wide.csv,eventID,string,"An identifier for the set of information associated with the event, which includes information about the place and time of the event"
+three_pass_data_wide.csv,eventID,string,"AnÂ identifierÂ forÂ theÂ setÂ ofÂ informationÂ associatedÂ withÂ theÂ event,Â whichÂ includesÂ informationÂ aboutÂ theÂ placeÂ andÂ timeÂ ofÂ theÂ event"
 three_pass_data_wide.csv,increased,string,Identifier (Y/N) indicating if the number of fish increased in the 3rd pass versus the 1st pass.
 three_pass_data_wide.csv,mean_wetted_width_m,meters,mean wetted width of NEON stream sampling site
 three_pass_data_wide.csv,measuredReachLength,meters,length of reach sampled per three-pass removal sampling
