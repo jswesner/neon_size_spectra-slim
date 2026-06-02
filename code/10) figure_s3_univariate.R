@@ -12,7 +12,7 @@ library(ggtext)
 # univariate plot ---------------------------------------------------------
 fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 fit_temp = readRDS("models/fit_temp_year.rds")
-predictors = read_csv("data/predictors.csv")
+predictors = readRDS("data/predictors.rds")
 
 mean_temp = attributes(predictors$mat_s)$`scaled:center`
 sd_temp = attributes(predictors$mat_s)$`scaled:scale`

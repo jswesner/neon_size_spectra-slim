@@ -84,7 +84,7 @@ total_fish_afterculling = fish_raw %>%
 total_macros_afterculling$sum + total_fish_afterculling
 
 # create predictors and sd/means
-predictors_scaled = read_csv("data/predictors.csv") %>% 
+predictors_scaled = readRDS("data/predictors.rds") %>% 
   mutate(log_om = log(om))
 
 mean_temp = attributes(predictors_scaled$mat_s)$`scaled:center`

@@ -206,20 +206,20 @@ macro_lw_coeffs.csv,taxon,string,"id for ""fish"" of ""macro"""
 mean_wetted_width.rds,mean_wetted_width_m,meters,mean wetted width of NEON stream sampling site
 mean_wetted_width.rds,sd_wetted_width_m,standard deviation,standard deviation of wetted width measures of NEON stream
 mean_wetted_width.rds,site_id,string,four-letter NEON site code
-predictors.csv,gpp,grams of carbon per square meter per year,Gross Primary Production (gC/m2/y)
-predictors.csv,log_gpp_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in ""data/predictors.csv"""
-predictors.csv,log_om,natural log-transformed grams per square meter,
-predictors.csv,log_om_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in ""data/predictors.csv"""
-predictors.csv,mat_s,unit scale: standard deviations from the mean,"standardized (z-score) mean annual temperature. Raw values and conversion factors are in ""data/predictors.csv"""
-predictors.csv,mean_gpp,grams of carbon per square meter per year,arithmetic mean of gross primary production across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,mean_om,grams per square meter,arithmetic mean of organic matter standing stock across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,mean_temp,celsius,arithmetic mean of mean annual temperature (temp_deg_c) across NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,om,grams per square meter,ash-free dry mass standing stock
-predictors.csv,sd_gpp,standard deviation,standard deviation of gross primary production across the NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,sd_om,standard deviation,standard deviation of organic matter standing stock across the NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,sd_temp,standard deviation,standard deviation of mean annual temperature (temp_deg_c) across the NEON stream sites. This is used to transform the raw values to z-scores.
-predictors.csv,site_id,string,four-letter NEON site code
-predictors.csv,temp_deg_c,celsius,mean annual stream temperatures in degrees celsius
+predictors.rds,gpp,grams of carbon per square meter per year,Gross Primary Production (gC/m2/y)
+predictors.rds,log_gpp_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed gross primary production. Raw values and conversion factors are in ""data/predictors.csv"""
+predictors.rds,log_om,natural log-transformed grams per square meter,
+predictors.rds,log_om_s,unit scale: standard deviations from the mean of natural log-transformed data,"standardized (z-score) of natural log-transformed organic matter. Raw values and conversion factors are in ""data/predictors.csv"""
+predictors.rds,mat_s,unit scale: standard deviations from the mean,"standardized (z-score) mean annual temperature. Raw values and conversion factors are in ""data/predictors.csv"""
+predictors.rds,mean_gpp,grams of carbon per square meter per year,arithmetic mean of gross primary production across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,mean_om,grams per square meter,arithmetic mean of organic matter standing stock across the 22 NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,mean_temp,celsius,arithmetic mean of mean annual temperature (temp_deg_c) across NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,om,grams per square meter,ash-free dry mass standing stock
+predictors.rds,sd_gpp,standard deviation,standard deviation of gross primary production across the NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,sd_om,standard deviation,standard deviation of organic matter standing stock across the NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,sd_temp,standard deviation,standard deviation of mean annual temperature (temp_deg_c) across the NEON stream sites. This is used to transform the raw values to z-scores.
+predictors.rds,site_id,string,four-letter NEON site code
+predictors.rds,temp_deg_c,celsius,mean annual stream temperatures in degrees celsius
 sample_size.rds,n,integer,count
 sample_size.rds,sample_id,integer,unique number representing replicate samples. Each number corresponds to a unique collection date and site
 site_lat_longs.csv,lat,decimal degrees,latitude of NEON site

@@ -15,7 +15,7 @@ fit_temp_om_gpp = readRDS("models/fit_macros.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
-predictors = read_csv("data/predictors.csv")
+predictors = readRDS("data/predictors.rds")
 
 mean_temp = attributes(predictors$mat_s)$`scaled:center`
 sd_temp = attributes(predictors$mat_s)$`scaled:scale`
@@ -87,7 +87,7 @@ fit_temp_om_gpp = readRDS("models/fit_fish.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
-predictors = read_csv("data/predictors.csv")
+predictors = readRDS("data/predictors.rds")
 
 mean_temp = attributes(predictors$mat_s)$`scaled:center`
 sd_temp = attributes(predictors$mat_s)$`scaled:scale`

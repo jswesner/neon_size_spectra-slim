@@ -6,7 +6,7 @@ library(isdbayes)
 # Literature Figure Comparisons -------------------------------------------
 theme_set(theme_default())
 
-predictors = read_csv("data/predictors.csv")
+predictors = readRDS("data/predictors.rds")
 
 predictors_scaled
 
