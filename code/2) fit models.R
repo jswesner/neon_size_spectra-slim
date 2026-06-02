@@ -32,9 +32,9 @@ dat_2022_clauset = readRDS(file = "data/dat_2022_clauset.rds")
 
 #2) fit submodel using the update function
 
-fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sample_id) + (1 + mat_s | year),
-                       cores = 4, threads = 12, chains = 4, iter = 2000)
-saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")
+# fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sample_id) + (1 + mat_s | year),
+#                        cores = 4, threads = 12, chains = 4, iter = 2000)
+# saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")
 
 # check seasonal effect ---------------------------------------------------
 
@@ -96,5 +96,5 @@ dat_lat_long = left_join(fit_temp_om_gpp_year$data, neon_latlong)
 #                        gp(lat, long), newdata = dat_lat_long, 
 #                      iter = 2000, chains = 4)
 
-saveRDS(fit_latlong, file = "models/fit_latlong.rds")
+# saveRDS(fit_latlong, file = "models/fit_latlong.rds")
 
