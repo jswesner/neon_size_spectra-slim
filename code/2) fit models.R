@@ -36,8 +36,6 @@ fit_temp_year = update(fit_temp_om_gpp, formula = . ~ mat_s + (1 | site_id:sampl
                        cores = 4, threads = 12, chains = 4, iter = 2000)
 saveRDS(fit_temp_year, file = "models/fit_temp_year.rds")
 
-
-
 # check seasonal effect ---------------------------------------------------
 
 # first samples of the year only

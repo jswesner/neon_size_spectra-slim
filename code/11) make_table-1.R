@@ -6,7 +6,9 @@ library(isdbayes)
 # Literature Figure Comparisons -------------------------------------------
 theme_set(theme_default())
 
-predictors = readRDS("data/predictors.rds")
+predictors = readRDS("data/predictors.csv")
+
+predictors_scaled
 
 predictors %>% 
   distinct(site_id,
@@ -19,3 +21,5 @@ predictors %>%
            ) %>% 
   mutate(across(where(is.numeric), round, 0))%>% 
   write_csv(., file = "tables/environmental_summary.csv")
+
+

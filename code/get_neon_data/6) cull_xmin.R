@@ -35,7 +35,7 @@ xmin_list = list()
 xmins_clauset = readRDS(file = "data/xmins_clauset.rds")
 
 # load predictors. these are standardized after removing SYCA (Not essential. This is specific to our neon analysis)
-predictors = readRDS(file = "data/predictors_scaled.rds")
+predictors = readRDS(file = "data/predictors.csv")
 
 # 6) join the clauset xmins and remove any masses below that
 dat_2024_clauset_xmins = dat_2024 %>% 

@@ -11,7 +11,7 @@ theme_set(brms::theme_default())
 fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 dat = as_tibble(fit_temp_om_gpp$data)
 # load data
-predictors = readRDS("data/predictors_scaled.rds") %>% 
+predictors = readRDS("data/predictors.csv") %>% 
   mutate(log_om = log(om))
 
 mean_temp = attributes(predictors$mat_s)$`scaled:center`

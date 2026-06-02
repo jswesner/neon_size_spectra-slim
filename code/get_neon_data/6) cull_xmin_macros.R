@@ -23,7 +23,7 @@ for(i in 1:length(dat_list)){
 xmins_clauset = bind_rows(xmin_list)
 
 # load predictors. these are standardized after removing SYCA
-predictors = readRDS(file = "data/predictors.rds")
+predictors = readRDS(file = "data/predictors.csv")
 
 dat_2024_clauset_xmins = dat_2024 %>% left_join(xmins_clauset) %>% 
   group_by(sample_id) %>% 
