@@ -11,13 +11,13 @@ neon_latlong <- read_csv(file = "data/raw_data/site_lat_longs.csv") %>% distinct
   mutate(long = case_when(site_id == "GUIL" ~ long + 0.5,
                           TRUE ~ long)) # add some noise so the Puerto Rico sites don't overlap.
 
-predictors = readRDS("data/predictors.csv") 
+predictors = readRDS("data/predictors.rds") 
 
 temp_gpp_om = predictors %>% 
-  ungroup %>% distinct(site_id, temp_deg_c,
-                       gpp, om) %>% 
+  ungroup %>% distinct(site_id, mean_temp,
+                       mean_gpp, mean_om) %>% 
   left_join(neon_latlong) %>% 
-  pivot_longer(cols = c(gpp, om, temp_deg_c))
+  pivot_longer(cols = c(mean_gpp, mean_om, mean_temp))
 
 # load map data
 world <- map_data("world") %>% expand_grid(name = temp_gpp_om %>% distinct(name))

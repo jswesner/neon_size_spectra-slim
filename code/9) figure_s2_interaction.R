@@ -15,7 +15,7 @@ fit_temp_om_gpp = readRDS("models/fit_temp_om_gpp_year.rds")
 fit_temp_om_gpp$preds = "temp*om*gpp"
 
 # load data
-predictors = readRDS("data/predictors.csv")
+predictors = read_csv("data/predictors.csv")
 
 mean_temp = attributes(predictors$mat_s)$`scaled:center`
 sd_temp = attributes(predictors$mat_s)$`scaled:scale`

@@ -43,7 +43,7 @@ fit_list = list(fit_fish, fit_macros, fit_first, fit_last, fit_latlong, fit_surb
 
 lat_long = read_csv("data/classified_coordinates.csv") %>% clean_names() %>% distinct(site_id, lat, long)
 
-predictors = readRDS("data/predictors.csv") %>% 
+predictors = read_csv("data/predictors.csv") %>% 
   mutate(log_om = log(om)) %>% 
   left_join(lat_long)
 
